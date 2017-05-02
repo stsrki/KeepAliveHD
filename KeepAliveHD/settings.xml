@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Settings>
+	<Section Name="Application">
+		<Item Key="WritingEnabled" Value="False"/>
+		<Item Key="DeleteTextFile" Value="False"/>
+		<Item Key="IgnoreVolumeNames" Value="False"/>
+		<Item Key="LogMessages" Value="False"/>
+	</Section>
+	<Section Name="System">
+		<Item Key="AutoRunOnStartup" Value="False"/>
+		<Item Key="HideInTray" Value="True"/>
+		<Item Key="MinimizeOnClose" Value="False"/>
+		<Item Key="TurnOffWhenUserInactive" Value="False"/>
+		<Item Key="TurnOffWhenUserInactiveTimeInterval" Value="1"/>
+		<Item Key="TurnOffWhenUserInactiveTimeUnit" Value="h"/>
+	</Section>
+</Settings>

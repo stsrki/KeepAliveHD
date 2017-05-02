@@ -1,6 +1,8 @@
 # KeepAliveHD v1.5.1
 KeepAliveHD is a simple program which prevents your hard drive to go into automatic standby mode. It works by writing a small text file to your external drive every few minutes.
 
+You can download setup file from the release tab: https://github.com/stsrki/keepalivehd/releases
+
 ### Changes in v1.5.1
 Added option to start minimized when launching the application.
 

@@ -1,3 +1,6 @@
+### Changes in v1.5.2
+* Minor bug-fixes.
+
 ### Changes in v1.5.1
 * Added option to start minimized when launching the application.
 

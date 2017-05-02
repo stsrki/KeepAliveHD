@@ -16,9 +16,9 @@ namespace KeepAliveHD.Forms
     {
         #region Members
 
-        private int _iDriveID = 0;
+        private int _driveID = 0;
 
-        private List<string> _VolumeNames = new List<string>();
+        private List<string> _volumeNames = new List<string>();
 
         #endregion
 
@@ -28,7 +28,7 @@ namespace KeepAliveHD.Forms
         {
             InitializeComponent();
 
-            _iDriveID = iDriveID;
+            _driveID = iDriveID;
         }
 
         #endregion
@@ -39,9 +39,9 @@ namespace KeepAliveHD.Forms
 
         private void VolumeNames_Load( object sender, EventArgs e )
         {
-            if ( _iDriveID > 0 )
+            if ( _driveID > 0 )
             {
-                Database.DatabaseManager.FillVolumeNames( dgVolumeNames, _iDriveID );
+                Database.DatabaseManager.FillVolumeNames( dgVolumeNames, _driveID );
             }
 
             SetVolumeNamesEditMode();
@@ -53,7 +53,7 @@ namespace KeepAliveHD.Forms
             {
                 if ( DialogResult == DialogResult.OK )
                 {
-                    _VolumeNames.Clear();
+                    _volumeNames.Clear();
 
                     foreach ( DataGridViewRow row in dgVolumeNames.Rows )
                     {
@@ -61,11 +61,11 @@ namespace KeepAliveHD.Forms
 
                         if ( !string.IsNullOrEmpty( sValue ) )
                         {
-                            _VolumeNames.Add( sValue );
+                            _volumeNames.Add( sValue );
                         }
                     }
 
-                    if ( _VolumeNames.Count == 0 )
+                    if ( _volumeNames.Count == 0 )
                     {
                         if ( MessageBox.Show( "It is not advisable to remove all volume names.\r\nAre you sure you want to continue?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1 ) == DialogResult.No )
                         {
@@ -74,7 +74,7 @@ namespace KeepAliveHD.Forms
                         }
                     }
 
-                    Database.DatabaseManager.UpdateVolumeNames( id: _iDriveID, volumeNames: _VolumeNames.ToArray() );
+                    Database.DatabaseManager.UpdateVolumeNames( id: _driveID, volumeNames: _volumeNames.ToArray() );
                 }
             }
             catch ( Exception exc )

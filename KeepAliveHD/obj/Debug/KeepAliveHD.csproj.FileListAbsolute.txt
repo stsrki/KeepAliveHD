@@ -1,1 +1,13 @@
 D:\Projects\Other\KeepAliveHD\KeepAliveHD\bin\Debug\KeepAliveHD.exe.config
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\bin\Debug\settings.xml
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\bin\Debug\KeepAliveHD.exe
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\bin\Debug\KeepAliveHD.pdb
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.csprojResolveAssemblyReference.cache
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.Forms.DriveSettings.resources
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.Forms.DriveSettingsMulti.resources
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.Forms.Main.resources
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.Forms.VolumeNames.resources
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.Properties.Resources.resources
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.csproj.GenerateResource.Cache
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.exe
+D:\Projects\Other\KeepAliveHD\KeepAliveHD\obj\Debug\KeepAliveHD.pdb

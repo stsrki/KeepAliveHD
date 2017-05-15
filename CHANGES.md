@@ -1,3 +1,6 @@
+### Changes in v1.5.3
+* Fixed startup on minimize mode.
+
 ### Changes in v1.5.2
 * Minor bug-fixes.
 

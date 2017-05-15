@@ -49,7 +49,16 @@ namespace KeepAliveHD.Forms
             InitializeComponent();
 
             _minimize = minimize;
+        }
 
+        #endregion
+
+        #region Events
+
+        #region Form
+
+        protected override void OnLoad( EventArgs e )
+        {
             try
             {
                 if ( _minimize )
@@ -93,16 +102,8 @@ namespace KeepAliveHD.Forms
                 LogManager.Write( exc.Message );
                 MessageBox.Show( exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1 );
             }
-        }
 
-        #endregion
-
-        #region Events
-
-        #region Form
-
-        private void Main_Load( object sender, EventArgs e )
-        {
+            base.OnLoad( e );
         }
 
         private void Main_FormClosing( object sender, FormClosingEventArgs e )

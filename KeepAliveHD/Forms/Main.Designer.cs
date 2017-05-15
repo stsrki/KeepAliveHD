@@ -721,7 +721,7 @@ namespace KeepAliveHD.Forms
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(357, 23);
             this.label6.TabIndex = 10;
-            this.label6.Text = "1.5.2 beta";
+            this.label6.Text = "1.5.3 beta";
             // 
             // label8
             // 
@@ -740,7 +740,7 @@ namespace KeepAliveHD.Forms
             this.lnkEmail.Size = new System.Drawing.Size(357, 23);
             this.lnkEmail.TabIndex = 8;
             this.lnkEmail.TabStop = true;
-            this.lnkEmail.Text = "st.srki@gmail.com";
+            this.lnkEmail.Text = "https://github.com/stsrki/KeepAliveHD/issues";
             this.lnkEmail.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkEmail_LinkClicked);
             // 
             // label7
@@ -871,7 +871,6 @@ namespace KeepAliveHD.Forms
             this.Text = "KeepAliveHD";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
-            this.Load += new System.EventHandler(this.Main_Load);
             this.Resize += new System.EventHandler(this.Main_Resize);
             this.tabMain.ResumeLayout(false);
             this.tabPageConfiguration.ResumeLayout(false);

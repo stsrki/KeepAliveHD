@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{8623BFAD-9E79-4188-9EB4-9740CEDD3B44}
 AppName=KeepAliveHD
-AppVerName=KeepAliveHD 1.5.2 beta
+AppVerName=KeepAliveHD 1.5.3 beta
 AppPublisher=Megabit d.o.o.
 AppPublisherURL=
 AppSupportURL=

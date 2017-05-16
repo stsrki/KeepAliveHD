@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/4v1p5q25xf3o3yr0?svg=true)](https://ci.appveyor.com/project/stsrki/keepalivehd)
+
 # KeepAliveHD
 KeepAliveHD is a simple program which prevents your hard drive to go into automatic standby mode. It works by writing a small text file to your external drive every few minutes.
 

@@ -37,6 +37,10 @@ namespace KeepAliveHD.Forms
 
         private void DriveSettingsMulti_Load( object sender, EventArgs e )
         {
+            cboOperation.Items.Add( new ComboBoxItem( "Write", "w" ) );
+            cboOperation.Items.Add( new ComboBoxItem( "Read", "r" ) );
+            cboOperation.SelectedIndex = 0;
+
             cboTimeUnit.Items.Add( new ComboBoxItem( "seconds", "s" ) );
             cboTimeUnit.Items.Add( new ComboBoxItem( "minutes", "m" ) );
             cboTimeUnit.Items.Add( new ComboBoxItem( "hours", "h" ) );
@@ -55,6 +59,7 @@ namespace KeepAliveHD.Forms
                 if ( DialogResult == DialogResult.OK )
                 {
                     int timeInterval = (int)numTimeInterval.Value;
+                    string operation = ComboBoxTools.GetSelectedValue( cboOperation );
                     string timeUnit = ComboBoxTools.GetSelectedValue( cboTimeUnit );
                     int status = chkEnabled.Checked ? 1 : 0;
 
@@ -67,7 +72,7 @@ namespace KeepAliveHD.Forms
                         {
                             string sVolumeName = ( new System.IO.DriveInfo( Path.GetPathRoot( drive ) ) ).VolumeLabel;
 
-                            Database.DatabaseManager.Insert( out _id, drive: drive, volumeName: sVolumeName, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
+                            Database.DatabaseManager.Insert( out _id, drive: drive, volumeName: sVolumeName, operation: operation, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
                         }
                         else
                         {
@@ -78,7 +83,7 @@ namespace KeepAliveHD.Forms
                             if ( driveInfo != null )
                             {
                                 _id = driveInfo.ID;
-                                Database.DatabaseManager.Update( id: _id, drive: drive, volumeName: sVolumeName, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
+                                Database.DatabaseManager.Update( id: _id, drive: drive, volumeName: sVolumeName, operation: operation, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
                             }
                         }
                     }
@@ -90,6 +95,13 @@ namespace KeepAliveHD.Forms
                 LogManager.Write( exc.Message );
                 MessageBox.Show( exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1 );
             }
+        }
+
+        private void cboOperation_SelectedIndexChanged( object sender, EventArgs e )
+        {
+            string operation = ComboBoxTools.GetSelectedValue( cboOperation );
+
+            lblOperationInfo.Text = operation == "r" ? "disk every" : "file every";
         }
 
         #endregion

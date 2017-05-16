@@ -62,6 +62,7 @@ namespace KeepAliveHD.Database
                                         VolumeNames = d.Element( "VolumeNames" ) == null ?
                                             new List<string>( new string[] { ( d.Element( "VolumeName" ) == null ? string.Empty : d.Element( "VolumeName" ).Value ) } ) : // this is needed to support old xml schema
                                             new List<string>( ( from v in d.Element( "VolumeNames" ).Elements() select v == null ? string.Empty : v.Value ).ToArray() ),
+                                        Operation = d.Element( "Operation" ) == null ? "w" : d.Element( "Operation" ).Value,
                                         TimeInterval = d.Element( "TimeInterval" ) == null ? 7 : Convert.ToInt32( d.Element( "TimeInterval" ).Value ) < 1 ? 1 : Convert.ToInt32( d.Element( "TimeInterval" ).Value ),
                                         TimeUnit = d.Element( "TimeUnit" ) == null ? "m" : d.Element( "TimeUnit" ).Value,
                                         Status = d.Element( "Status" ) == null ? 0 : Convert.ToInt32( d.Element( "Status" ).Value ),
@@ -78,6 +79,7 @@ namespace KeepAliveHD.Database
                       new XElement( "ID", d.ID ),
                       new XElement( "Drive", d.Drive ),
                       new XElement( "VolumeNames", ( from v in d.VolumeNames select new XElement( "Name", v ) ) ),
+                      new XElement( "Operation", d.Operation ),
                       new XElement( "TimeInterval", d.TimeInterval ),
                       new XElement( "TimeUnit", d.TimeUnit ),
                       new XElement( "Status", d.Status ),
@@ -96,7 +98,7 @@ namespace KeepAliveHD.Database
                            d.Drive,
                            VolumeName = string.Join( ", ", d.VolumeNames.Take( 3 ) ) + ( d.VolumeNames.Count > 3 ? " ..." : "" ),
                            d.TimeInterval,
-                           TimeIntervalText = d.TimeInterval.ToString() + ( d.TimeUnit == "s" ? " seconds" : d.TimeUnit == "m" ? " minutes" : d.TimeUnit == "h" ? " hours" : " unknown" ),
+                           TimeIntervalText = d.TimeInterval.ToString() + ( d.TimeUnit == "s" ? " seconds" : d.TimeUnit == "m" ? " minutes" : d.TimeUnit == "h" ? " hours" : " unknown" ) + ( d.Operation == "r" ? " (read)" : " (write)" ),
                            d.TimeUnit,
                            d.Status,
                            d.Connected,
@@ -140,7 +142,7 @@ namespace KeepAliveHD.Database
             return ( from d in _drives where d.ID != id && d.Drive == drive select d ).Any();
         }
 
-        public static bool Insert( out int id, string drive, string volumeName, int timeInterval, string timeUnit, int status )
+        public static bool Insert( out int id, string drive, string volumeName, string operation, int timeInterval, string timeUnit, int status )
         {
             id = 0;
 
@@ -151,6 +153,7 @@ namespace KeepAliveHD.Database
                     ID = GetNewID(),
                     Drive = drive,
                     VolumeNames = new List<string>( new string[] { volumeName } ),
+                    Operation = operation,
                     TimeInterval = timeInterval,
                     TimeUnit = timeUnit,
                     Status = status
@@ -170,7 +173,7 @@ namespace KeepAliveHD.Database
             }
         }
 
-        public static bool Update( int id, string drive, string volumeName, int timeInterval, string timeUnit, int status )
+        public static bool Update( int id, string drive, string volumeName, string operation, int timeInterval, string timeUnit, int status )
         {
             try
             {
@@ -179,6 +182,7 @@ namespace KeepAliveHD.Database
                 if ( driveInfo != null )
                 {
                     driveInfo.Drive = drive;
+                    driveInfo.Operation = operation;
                     driveInfo.TimeInterval = timeInterval;
                     driveInfo.TimeUnit = timeUnit;
                     driveInfo.Status = status;

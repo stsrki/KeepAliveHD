@@ -25,6 +25,11 @@ namespace KeepAliveHD.Database
         //public string VolumeName { get; set; }
 
         /// <summary>
+        /// Operation type.
+        /// </summary>
+        public string Operation { get; set; }
+
+        /// <summary>
         /// Time interval in minutes.
         /// </summary>
         public int TimeInterval { get; set; }

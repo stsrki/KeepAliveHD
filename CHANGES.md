@@ -1,3 +1,7 @@
+### Changes in v1.6
+* Added option to select read drive instead of writing. This is mostly used on SSD drives. Default is still write mode.
+* Replaced Enable writing mode checkbox with the start/stop buttons.
+
 ### Changes in v1.5.4
 * Fixed contact link.
 

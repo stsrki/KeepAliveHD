@@ -35,6 +35,10 @@ namespace KeepAliveHD.Forms
 
         private void DriveSettings_Load( object sender, EventArgs e )
         {
+            cboOperation.Items.Add( new ComboBoxItem( "Write", "w" ) );
+            cboOperation.Items.Add( new ComboBoxItem( "Read", "r" ) );
+            cboOperation.SelectedIndex = 0;
+
             cboTimeUnit.Items.Add( new ComboBoxItem( "seconds", "s" ) );
             cboTimeUnit.Items.Add( new ComboBoxItem( "minutes", "m" ) );
             cboTimeUnit.Items.Add( new ComboBoxItem( "hours", "h" ) );
@@ -64,6 +68,7 @@ namespace KeepAliveHD.Forms
                         throw new Exception( "The path does not exist." );
 
                     string volumeName = ( new System.IO.DriveInfo( Path.GetPathRoot( drive ) ) ).VolumeLabel;
+                    string operation = ComboBoxTools.GetSelectedValue( cboOperation );
                     int timeInterval = (int)numTimeInterval.Value;
                     string timeUnit = ComboBoxTools.GetSelectedValue( cboTimeUnit );
                     int status = chkEnabled.Checked ? 1 : 0;
@@ -83,11 +88,11 @@ namespace KeepAliveHD.Forms
 
                     if ( _id == 0 )
                     {
-                        Database.DatabaseManager.Insert( id: out _id, drive: drive, volumeName: volumeName, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
+                        Database.DatabaseManager.Insert( id: out _id, drive: drive, volumeName: volumeName, operation: operation, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
                     }
                     else
                     {
-                        Database.DatabaseManager.Update( id: _id, drive: drive, volumeName: volumeName, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
+                        Database.DatabaseManager.Update( id: _id, drive: drive, volumeName: volumeName, operation: operation, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
                     }
                 }
             }
@@ -102,15 +107,22 @@ namespace KeepAliveHD.Forms
         private void btnSelectDrive_Click( object sender, EventArgs e )
         {
             using ( FolderBrowserDialog dialog = new FolderBrowserDialog()
-              {
-                  RootFolder = Environment.SpecialFolder.MyComputer
-              } )
+            {
+                RootFolder = Environment.SpecialFolder.MyComputer
+            } )
             {
                 if ( dialog.ShowDialog() == DialogResult.OK )
                 {
                     txtDrive.Text = dialog.SelectedPath;
                 }
             }
+        }
+
+        private void cboOperation_SelectedIndexChanged( object sender, EventArgs e )
+        {
+            string operation = ComboBoxTools.GetSelectedValue( cboOperation );
+
+            lblOperationInfo.Text = operation == "r" ? "disk every" : "file every";
         }
 
         #endregion
@@ -124,6 +136,7 @@ namespace KeepAliveHD.Forms
             txtDrive.Text = di.Drive;
             numTimeInterval.Value = di.TimeInterval;
             chkEnabled.Checked = di.Status == 1;
+            ComboBoxTools.SelectItemValue( cboOperation, di.Operation );
             ComboBoxTools.SelectItemValue( cboTimeUnit, di.TimeUnit );
         }
 

@@ -31,18 +31,19 @@
             this.chkEnabled = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtDrives = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.numTimeInterval = new System.Windows.Forms.NumericUpDown();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
             this.cboTimeUnit = new System.Windows.Forms.ComboBox();
+            this.cboOperation = new System.Windows.Forms.ComboBox();
+            this.lblOperationInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numTimeInterval)).BeginInit();
             this.SuspendLayout();
             // 
             // chkEnabled
             // 
             this.chkEnabled.AutoSize = true;
-            this.chkEnabled.Location = new System.Drawing.Point(280, 66);
+            this.chkEnabled.Location = new System.Drawing.Point(280, 55);
             this.chkEnabled.Name = "chkEnabled";
             this.chkEnabled.Size = new System.Drawing.Size(65, 17);
             this.chkEnabled.TabIndex = 17;
@@ -67,19 +68,9 @@
             this.txtDrives.Size = new System.Drawing.Size(329, 20);
             this.txtDrives.TabIndex = 13;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 13);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "Write file every";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // numTimeInterval
             // 
-            this.numTimeInterval.Location = new System.Drawing.Point(15, 64);
+            this.numTimeInterval.Location = new System.Drawing.Point(144, 52);
             this.numTimeInterval.Minimum = new decimal(new int[] {
             1,
             0,
@@ -96,11 +87,10 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Image = global::KeepAliveHD.Properties.Resources.ActionCancel_16x16;
             this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCancel.Location = new System.Drawing.Point(183, 92);
+            this.btnCancel.Location = new System.Drawing.Point(183, 78);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(162, 25);
             this.btnCancel.TabIndex = 10;
@@ -109,11 +99,10 @@
             // 
             // btnOk
             // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOk.Image = global::KeepAliveHD.Properties.Resources.ActionAccept_16x16;
             this.btnOk.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnOk.Location = new System.Drawing.Point(15, 92);
+            this.btnOk.Location = new System.Drawing.Point(15, 78);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(162, 25);
             this.btnOk.TabIndex = 9;
@@ -124,10 +113,30 @@
             // 
             this.cboTimeUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboTimeUnit.FormattingEnabled = true;
-            this.cboTimeUnit.Location = new System.Drawing.Point(69, 63);
+            this.cboTimeUnit.Location = new System.Drawing.Point(198, 51);
             this.cboTimeUnit.Name = "cboTimeUnit";
-            this.cboTimeUnit.Size = new System.Drawing.Size(108, 21);
+            this.cboTimeUnit.Size = new System.Drawing.Size(68, 21);
             this.cboTimeUnit.TabIndex = 18;
+            // 
+            // cboOperation
+            // 
+            this.cboOperation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboOperation.FormattingEnabled = true;
+            this.cboOperation.Location = new System.Drawing.Point(15, 51);
+            this.cboOperation.Name = "cboOperation";
+            this.cboOperation.Size = new System.Drawing.Size(68, 21);
+            this.cboOperation.TabIndex = 19;
+            this.cboOperation.SelectedIndexChanged += new System.EventHandler(this.cboOperation_SelectedIndexChanged);
+            // 
+            // lblOperationInfo
+            // 
+            this.lblOperationInfo.AutoSize = true;
+            this.lblOperationInfo.Location = new System.Drawing.Point(89, 54);
+            this.lblOperationInfo.Name = "lblOperationInfo";
+            this.lblOperationInfo.Size = new System.Drawing.Size(49, 13);
+            this.lblOperationInfo.TabIndex = 20;
+            this.lblOperationInfo.Text = "file every";
+            this.lblOperationInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // DriveSettingsMulti
             // 
@@ -135,12 +144,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(356, 131);
+            this.ClientSize = new System.Drawing.Size(356, 114);
+            this.Controls.Add(this.lblOperationInfo);
+            this.Controls.Add(this.cboOperation);
             this.Controls.Add(this.cboTimeUnit);
             this.Controls.Add(this.chkEnabled);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtDrives);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.numTimeInterval);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
@@ -165,10 +175,11 @@
         private System.Windows.Forms.CheckBox chkEnabled;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtDrives;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numTimeInterval;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.ComboBox cboTimeUnit;
+        private System.Windows.Forms.ComboBox cboOperation;
+        private System.Windows.Forms.Label lblOperationInfo;
     }
 }

@@ -2,7 +2,7 @@
 
 <img src="https://github.com/stsrki/KeepAliveHD/blob/master/Design/Images/128x128/App04.png" />
 
-[![Build status](https://ci.appveyor.com/api/projects/status/4v1p5q25xf3o3yr0?svg=true)](https://ci.appveyor.com/project/stsrki/keepalivehd) [![Downloads](https://img.shields.io/github/downloads/stsrki/KeepAliveHD/total.svg)](https://github.com/stsrki/KeepAliveHD/releases)
+[![Build status](https://ci.appveyor.com/api/projects/status/be2sr7hpx3kj3gee?svg=true)](https://ci.appveyor.com/project/stsrki/keepalivehd) [![Downloads](https://img.shields.io/github/downloads/stsrki/KeepAliveHD/total.svg)](https://github.com/stsrki/KeepAliveHD/releases)
 
 KeepAliveHD is a simple program which prevents your hard drive to go into automatic standby mode. It works by writing a small text file to your external drive every few minutes.
 

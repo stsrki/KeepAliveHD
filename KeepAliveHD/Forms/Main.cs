@@ -206,7 +206,7 @@ namespace KeepAliveHD.Forms
 
         private void lnkEmail_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
-            Process.Start( "mailto:" + lnkEmail.Text );
+            Process.Start( lnkEmail.Text );
         }
 
         private void btnOpenLogDir_Click( object sender, EventArgs e )

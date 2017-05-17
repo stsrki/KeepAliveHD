@@ -13,3 +13,6 @@ v1.6
 You can download setup file from the [release tab](https://github.com/stsrki/KeepAliveHD/releases)
 
 For a complete list of changes here is a [changelog](https://github.com/stsrki/keepalivehd/blob/master/CHANGES.md).
+
+## Donations
+This programmer needs a lot of coffee to stay sharp. Donate on [Patreon](https://www.patreon.com/mladenmacanovic)

@@ -1,3 +1,7 @@
+### Changes in v1.6.1
+* Minor improvements on start/stop button.
+* Changed about page.
+
 ### Changes in v1.6
 * Added option to read drive instead of writing. This is mostly used on SSD drives. Default is still write mode.
 * Replaced Enable writing mode checkbox with the start/stop buttons.

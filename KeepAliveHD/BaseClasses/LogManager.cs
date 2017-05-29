@@ -34,7 +34,7 @@ namespace KeepAliveHD.BaseClasses
             }
         }
 
-        public static void Write( string message, params string[] args )
+        public static void Write( string message, params object[] args )
         {
             if ( ApplicationConfiguration.LogMessages )
             {

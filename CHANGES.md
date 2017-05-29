@@ -1,3 +1,7 @@
+### Changes in v1.6.2
+* Added option to automatically run in STARTED mode when application is opened from Task Scheduler.
+* Fixed bug where nothing is readed for drive(s) in reading mode.
+
 ### Changes in v1.6.1
 * Minor improvements on start/stop button.
 * Changed about page.

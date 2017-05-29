@@ -363,7 +363,7 @@ namespace KeepAliveHD.Forms
                     {
                         var fileNames = Directory.GetFiles( driveInfo.Drive, "*.*" ).Take( 5 ).ToList();
 
-                        if ( fileNames?.Count > 0 )
+                        if ( fileNames != null && fileNames.Count > 0 )
                         {
                             // get random file
                             var fileName = fileNames[_random.Next( Math.Max( fileNames.Count - 1, 1 ) )];

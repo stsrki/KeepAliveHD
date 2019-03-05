@@ -15,4 +15,4 @@ You can download setup file from the [release tab](https://github.com/stsrki/Kee
 Complete list of changes can be found [here](https://github.com/stsrki/keepalivehd/blob/master/CHANGES.md).
 
 ## Donations
-This programmer needs a lot of coffee to stay sharp. <a href="https://www.buymeacoffee.com/mladenmacanovic" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+<a href="https://www.buymeacoffee.com/mladenmacanovic" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a> <a href="https://www.paypal.me/mladenmacanovic/5usd" id="donate-amount-5-usd"><img src="https://i.ibb.co/BKtv9Fs/PP-logo-h-100x26.png" alt="PP-logo-h-100x26" border="0"></a>

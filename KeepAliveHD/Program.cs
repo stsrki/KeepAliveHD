@@ -1,9 +1,11 @@
 ﻿#region Using Directives
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Windows.Forms;
+using System.Reflection;
 using System.Threading;
+using System.Windows.Forms;
 using KeepAliveHD.BaseClasses;
 #endregion
 
@@ -13,10 +15,10 @@ namespace KeepAliveHD
     {
         #region Members
 
-        /// <summary>
-        /// TO keep only one aplication openned.
-        /// </summary>
-        static Mutex mutex = new Mutex( true, "Megabit.KeepAliveHD" );
+        ///// <summary>
+        ///// TO keep only one aplication openned.
+        ///// </summary>
+        //static Mutex mutex = new Mutex( true, "Megabit.KeepAliveHD" );
 
         #endregion
 
@@ -28,53 +30,85 @@ namespace KeepAliveHD
         [STAThread]
         static void Main( string[] args )
         {
-            if ( mutex.WaitOne( TimeSpan.Zero, true ) )
+            // new log file
+            LogManager.Create( string.Format( "log_{0}.txt", DateTime.Today.ToString( "yyyy-MM-dd" ) ) );
+
+            // initialise configuration
+            new ApplicationConfiguration();
+
+            bool minimize = false;
+
+            if ( args.Length > 0 )
             {
+                var parser = new CommandLineParser();
+
                 try
                 {
-                    // new log file
-                    LogManager.Create( string.Format( "log_{0}.txt", DateTime.Today.ToString( "yyyy-MM-dd" ) ) );
-
-                    // initialise configuration
-                    new ApplicationConfiguration();
-
-                    bool minimize = false;
-
-                    if ( args.Length > 0 )
-                    {
-                        CommandLineParser parser = new CommandLineParser();
-
-                        try
-                        {
-                            minimize = parser.GetValue<bool>( "Minimize", args );
-                        }
-                        catch
-                        {
-                        }
-                    }
-                    else
-                        minimize = ApplicationConfiguration.StartMinimized;
-
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault( false );
-                    Application.Run( new Forms.Main( minimize ) );
+                    minimize = parser.GetValue<bool>( "Minimize", args );
                 }
-                catch ( Exception exc )
+                catch
                 {
-                    LogManager.Write( exc.Message );
-                    MessageBox.Show( exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1 );
-                }
-                finally
-                {
-                    mutex.ReleaseMutex();
                 }
             }
             else
-            {
-                // send our Win32 message to make the currently running instance
-                // jump on top of all the other windows
-                NativeMethods.PostMessage( (IntPtr)NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero );
-            }
+                minimize = ApplicationConfiguration.StartMinimized;
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault( false );
+
+            //create a controller and Pass an instance of your application main form
+            var controller = new ApplicationController( new Forms.Main( minimize ) );
+
+            //Run application
+            controller.Run( Environment.GetCommandLineArgs() );
+
+            //if ( mutex.WaitOne( TimeSpan.Zero, true ) )
+            //{
+            //    try
+            //    {
+            //        // new log file
+            //        LogManager.Create( string.Format( "log_{0}.txt", DateTime.Today.ToString( "yyyy-MM-dd" ) ) );
+
+            //        // initialise configuration
+            //        new ApplicationConfiguration();
+
+            //        bool minimize = false;
+
+            //        if ( args.Length > 0 )
+            //        {
+            //            CommandLineParser parser = new CommandLineParser();
+
+            //            try
+            //            {
+            //                minimize = parser.GetValue<bool>( "Minimize", args );
+            //            }
+            //            catch
+            //            {
+            //            }
+            //        }
+            //        else
+            //            minimize = ApplicationConfiguration.StartMinimized;
+
+            //        Application.EnableVisualStyles();
+            //        Application.SetCompatibleTextRenderingDefault( false );
+            //        Application.Run( new Forms.Main( minimize ) );
+            //    }
+            //    catch ( Exception exc )
+            //    {
+            //        LogManager.Write( exc.Message );
+            //        MessageBox.Show( exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1 );
+            //    }
+            //    finally
+            //    {
+            //        mutex.ReleaseMutex();
+            //    }
+            //}
+            //else
+            //{
+            //    // send our Win32 message to make the currently running instance
+            //    // jump on top of all the other windows
+            //    NativeMethods.PostMessage( (IntPtr)NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero );
+            //}
         }
 
         #endregion

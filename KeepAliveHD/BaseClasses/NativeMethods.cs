@@ -42,6 +42,12 @@ namespace KeepAliveHD.BaseClasses
         [DllImport( "user32.dll" )]
         public static extern int SetCursorPos( int x, int y );
 
+        [DllImport( "user32.dll" )]
+        public static extern bool ShowWindow( IntPtr hwnd, Int32 nCmdShow );
+
+        [DllImport( "user32.dll" )]
+        public static extern bool SetForegroundWindow( IntPtr hwnd );
+
         private const int WM_SETREDRAW = 11;
 
         public static void SuspendDrawing( Control parent )

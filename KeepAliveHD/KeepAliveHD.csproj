@@ -56,6 +56,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -77,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationController.cs" />
     <Compile Include="BaseClasses\ApplicationConfiguration.cs" />
     <Compile Include="BaseClasses\ComboBoxItem.cs" />
     <Compile Include="BaseClasses\ComboBoxTools.cs" />

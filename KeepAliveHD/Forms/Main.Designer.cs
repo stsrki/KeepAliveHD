@@ -29,22 +29,21 @@ namespace KeepAliveHD.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle33 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle31 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle32 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPageConfiguration = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.btnEngineStart = new System.Windows.Forms.Button();
             this.btnEngineStop = new System.Windows.Forms.Button();
             this.dgDrives = new System.Windows.Forms.DataGridView();
@@ -60,6 +59,7 @@ namespace KeepAliveHD.Forms
             this.btnDriveDelete = new System.Windows.Forms.ToolStripButton();
             this.btnDriveEdit = new System.Windows.Forms.ToolStripSplitButton();
             this.btnDriveVolumeNamesEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.tabPageDriveInfo = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tsConnectedDrives = new System.Windows.Forms.ToolStrip();
@@ -173,16 +173,6 @@ namespace KeepAliveHD.Forms
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Drive options";
             // 
-            // lblStatus
-            // 
-            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lblStatus.Location = new System.Drawing.Point(6, 327);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(365, 23);
-            this.lblStatus.TabIndex = 13;
-            this.lblStatus.Text = "Program is running...";
-            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // btnEngineStart
             // 
             this.btnEngineStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -229,9 +219,9 @@ namespace KeepAliveHD.Forms
             this.dgDrives.Name = "dgDrives";
             this.dgDrives.ReadOnly = true;
             this.dgDrives.RowHeadersVisible = false;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgDrives.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle28.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle28.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgDrives.RowsDefaultCellStyle = dataGridViewCellStyle28;
             this.dgDrives.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgDrives.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgDrives.Size = new System.Drawing.Size(446, 263);
@@ -260,8 +250,8 @@ namespace KeepAliveHD.Forms
             // 
             this.DrivesVolumeName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.DrivesVolumeName.DataPropertyName = "VolumeName";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.DrivesVolumeName.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DrivesVolumeName.DefaultCellStyle = dataGridViewCellStyle23;
             this.DrivesVolumeName.HeaderText = "Volume Name(s)";
             this.DrivesVolumeName.Name = "DrivesVolumeName";
             this.DrivesVolumeName.ReadOnly = true;
@@ -269,8 +259,8 @@ namespace KeepAliveHD.Forms
             // DrivesWriteTime
             // 
             this.DrivesWriteTime.DataPropertyName = "TimeInterval";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.DrivesWriteTime.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DrivesWriteTime.DefaultCellStyle = dataGridViewCellStyle24;
             this.DrivesWriteTime.HeaderText = "Write Every";
             this.DrivesWriteTime.Name = "DrivesWriteTime";
             this.DrivesWriteTime.ReadOnly = true;
@@ -280,8 +270,8 @@ namespace KeepAliveHD.Forms
             // DrivesWriteTimeText
             // 
             this.DrivesWriteTimeText.DataPropertyName = "TimeIntervalText";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.DrivesWriteTimeText.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DrivesWriteTimeText.DefaultCellStyle = dataGridViewCellStyle25;
             this.DrivesWriteTimeText.HeaderText = "Interval";
             this.DrivesWriteTimeText.Name = "DrivesWriteTimeText";
             this.DrivesWriteTimeText.ReadOnly = true;
@@ -290,8 +280,8 @@ namespace KeepAliveHD.Forms
             // DriveStatus
             // 
             this.DriveStatus.DataPropertyName = "Status";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.DriveStatus.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle26.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DriveStatus.DefaultCellStyle = dataGridViewCellStyle26;
             this.DriveStatus.HeaderText = "Status";
             this.DriveStatus.Name = "DriveStatus";
             this.DriveStatus.ReadOnly = true;
@@ -301,8 +291,8 @@ namespace KeepAliveHD.Forms
             // DriveStatusText
             // 
             this.DriveStatusText.DataPropertyName = "StatusText";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.DriveStatusText.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle27.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DriveStatusText.DefaultCellStyle = dataGridViewCellStyle27;
             this.DriveStatusText.HeaderText = "Status";
             this.DriveStatusText.Name = "DriveStatusText";
             this.DriveStatusText.ReadOnly = true;
@@ -360,6 +350,16 @@ namespace KeepAliveHD.Forms
             this.btnDriveVolumeNamesEdit.Size = new System.Drawing.Size(189, 22);
             this.btnDriveVolumeNamesEdit.Text = "Define volume names";
             this.btnDriveVolumeNamesEdit.Click += new System.EventHandler(this.btnDriveVolumeNamesEdit_Click);
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lblStatus.Location = new System.Drawing.Point(6, 327);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(365, 23);
+            this.lblStatus.TabIndex = 13;
+            this.lblStatus.Text = "Program is running...";
+            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tabPageDriveInfo
             // 
@@ -444,9 +444,9 @@ namespace KeepAliveHD.Forms
             this.dgConnectedDrives.Name = "dgConnectedDrives";
             this.dgConnectedDrives.ReadOnly = true;
             this.dgConnectedDrives.RowHeadersVisible = false;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgConnectedDrives.RowsDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle33.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle33.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgConnectedDrives.RowsDefaultCellStyle = dataGridViewCellStyle33;
             this.dgConnectedDrives.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgConnectedDrives.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgConnectedDrives.Size = new System.Drawing.Size(446, 263);
@@ -464,8 +464,8 @@ namespace KeepAliveHD.Forms
             // 
             this.InfoVolumeName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.InfoVolumeName.DataPropertyName = "VolumeName";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.InfoVolumeName.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.InfoVolumeName.DefaultCellStyle = dataGridViewCellStyle29;
             this.InfoVolumeName.HeaderText = "Volume Name";
             this.InfoVolumeName.Name = "InfoVolumeName";
             this.InfoVolumeName.ReadOnly = true;
@@ -473,8 +473,8 @@ namespace KeepAliveHD.Forms
             // InfoTotalSize
             // 
             this.InfoTotalSize.DataPropertyName = "TotalSize";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.InfoTotalSize.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle30.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.InfoTotalSize.DefaultCellStyle = dataGridViewCellStyle30;
             this.InfoTotalSize.HeaderText = "Total Size";
             this.InfoTotalSize.Name = "InfoTotalSize";
             this.InfoTotalSize.ReadOnly = true;
@@ -483,8 +483,8 @@ namespace KeepAliveHD.Forms
             // InfoFreeSpace
             // 
             this.InfoFreeSpace.DataPropertyName = "FreeSpace";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.InfoFreeSpace.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle31.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.InfoFreeSpace.DefaultCellStyle = dataGridViewCellStyle31;
             this.InfoFreeSpace.HeaderText = "Free Space";
             this.InfoFreeSpace.Name = "InfoFreeSpace";
             this.InfoFreeSpace.ReadOnly = true;
@@ -493,8 +493,8 @@ namespace KeepAliveHD.Forms
             // InfoType
             // 
             this.InfoType.DataPropertyName = "DriveType";
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.InfoType.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle32.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.InfoType.DefaultCellStyle = dataGridViewCellStyle32;
             this.InfoType.HeaderText = "Type";
             this.InfoType.Name = "InfoType";
             this.InfoType.ReadOnly = true;
@@ -522,9 +522,9 @@ namespace KeepAliveHD.Forms
             this.groupBox5.Controls.Add(this.btnOpenLogDir);
             this.groupBox5.Controls.Add(this.chkLogMessages);
             this.groupBox5.Controls.Add(this.chkDeleteTextFile);
-            this.groupBox5.Location = new System.Drawing.Point(6, 135);
+            this.groupBox5.Location = new System.Drawing.Point(6, 155);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(458, 227);
+            this.groupBox5.Size = new System.Drawing.Size(458, 207);
             this.groupBox5.TabIndex = 2;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Behaviour";
@@ -597,7 +597,7 @@ namespace KeepAliveHD.Forms
             this.groupBox2.Controls.Add(this.chkSystemAutoRun);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(458, 123);
+            this.groupBox2.Size = new System.Drawing.Size(458, 143);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "System";
@@ -605,7 +605,7 @@ namespace KeepAliveHD.Forms
             // chkStartMinimized
             // 
             this.chkStartMinimized.AutoSize = true;
-            this.chkStartMinimized.Location = new System.Drawing.Point(6, 98);
+            this.chkStartMinimized.Location = new System.Drawing.Point(6, 117);
             this.chkStartMinimized.Name = "chkStartMinimized";
             this.chkStartMinimized.Size = new System.Drawing.Size(96, 17);
             this.chkStartMinimized.TabIndex = 11;
@@ -616,13 +616,12 @@ namespace KeepAliveHD.Forms
             // chkHideTrayIcon
             // 
             this.chkHideTrayIcon.AutoSize = true;
-            this.chkHideTrayIcon.Location = new System.Drawing.Point(214, 71);
+            this.chkHideTrayIcon.Location = new System.Drawing.Point(23, 94);
             this.chkHideTrayIcon.Name = "chkHideTrayIcon";
-            this.chkHideTrayIcon.Size = new System.Drawing.Size(218, 17);
+            this.chkHideTrayIcon.Size = new System.Drawing.Size(236, 17);
             this.chkHideTrayIcon.TabIndex = 10;
-            this.chkHideTrayIcon.Text = "Hide tray icon when minimized (not used)";
+            this.chkHideTrayIcon.Text = "Hide tray icon when minimized (experimental)";
             this.chkHideTrayIcon.UseVisualStyleBackColor = true;
-            this.chkHideTrayIcon.Visible = false;
             this.chkHideTrayIcon.CheckedChanged += new System.EventHandler(this.chkHideTrayIcon_CheckedChanged);
             // 
             // cboTimeUnit

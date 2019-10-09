@@ -791,6 +791,7 @@ namespace KeepAliveHD.Forms
         {
             chkSystemAutoRun.Checked = ApplicationConfiguration.AutoRunOnStartup;
             chkSystemHideInTray.Checked = ApplicationConfiguration.HideInTray;
+            chkHideTrayIcon.Checked = ApplicationConfiguration.HideTrayIcon;
             chkMinimizeOnClose.Checked = ApplicationConfiguration.MinimizeOnClose;
             numTimeAmount.Value = ApplicationConfiguration.TurnOffWhenUserInactiveTimeInterval;
             Helpers.SelectItemValue( cboTimeUnit, ApplicationConfiguration.TurnOffWhenUserInactiveTimeUnit );
@@ -816,7 +817,7 @@ namespace KeepAliveHD.Forms
         {
             if ( this.WindowState == FormWindowState.Minimized && chkSystemHideInTray.Checked == true )
             {
-                ntfTray.Visible = true;
+                ntfTray.Visible = !ApplicationConfiguration.HideTrayIcon;
                 ntfTray.BalloonTipText = "KeepAliveHD";
                 ntfTray.Text = "KeepAliveHD";
                 this.ShowInTaskbar = false;

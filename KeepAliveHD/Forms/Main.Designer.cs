@@ -579,7 +579,7 @@ namespace KeepAliveHD.Forms
             this.chkDeleteTextFile.Name = "chkDeleteTextFile";
             this.chkDeleteTextFile.Size = new System.Drawing.Size(208, 17);
             this.chkDeleteTextFile.TabIndex = 1;
-            this.chkDeleteTextFile.Text = "Delete text file after it has being written";
+            this.chkDeleteTextFile.Text = "Delete text file after it has been written";
             this.chkDeleteTextFile.UseVisualStyleBackColor = true;
             this.chkDeleteTextFile.CheckedChanged += new System.EventHandler(this.chkDeleteTextFile_CheckedChanged);
             // 

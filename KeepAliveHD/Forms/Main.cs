@@ -324,6 +324,8 @@ namespace KeepAliveHD.Forms
 
         private void ManageDriveOperation( Database.DriveInfo driveInfo )
         {
+            bool previousConnected = driveInfo.Connected;
+
             if ( _resumedFromSleep != null )
             {
                 if ( ( DateTime.Now - _resumedFromSleep.Value ).TotalSeconds > 15 )
@@ -382,6 +384,8 @@ namespace KeepAliveHD.Forms
                                 }
                             }
                         }
+
+                        driveInfo.Connected = true;
                     }
                     else
                     {
@@ -412,6 +416,9 @@ namespace KeepAliveHD.Forms
             {
                 driveInfo.Connected = false;
             }
+
+            if ( previousConnected != driveInfo.Connected )
+                RefreshDriveStatus();
         }
 
         private void tmrIdle_Tick( object sender, EventArgs e )
@@ -802,6 +809,14 @@ namespace KeepAliveHD.Forms
                 Visible = true;
 
             Activate();
+        }
+
+        private void RefreshDriveStatus()
+        {
+            if ( !IsHandleCreated || IsDisposed )
+                return;
+
+            LoadDrives( SelectedDriveID );
         }
 
         private static void OpenWithShell( string target )

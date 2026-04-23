@@ -1,5 +1,7 @@
-﻿#region Using Directives
+#region Using Directives
 using System;
+using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using KeepAliveHD.BaseClasses;
@@ -68,10 +70,65 @@ namespace KeepAliveHD
             }
             else
             {
-                // send our Win32 message to make the currently running instance
-                // jump on top of all the other windows
-                NativeMethods.PostMessage( (IntPtr)NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero );
+                RestoreRunningInstance();
             }
+        }
+
+        private static void RestoreRunningInstance()
+        {
+            IntPtr windowHandle = FindRunningInstanceWindow();
+
+            if ( windowHandle != IntPtr.Zero )
+            {
+                NativeMethods.PostMessage( windowHandle, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero );
+                return;
+            }
+
+            NativeMethods.PostMessage( (IntPtr)NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero );
+        }
+
+        private static IntPtr FindRunningInstanceWindow()
+        {
+            Process currentProcess = Process.GetCurrentProcess();
+            Process runningInstance = Array.Find(
+                Process.GetProcessesByName( currentProcess.ProcessName ),
+                x => x.Id != currentProcess.Id );
+
+            if ( runningInstance == null )
+                return IntPtr.Zero;
+
+            IntPtr fallbackWindowHandle = IntPtr.Zero;
+            IntPtr windowHandle = IntPtr.Zero;
+
+            NativeMethods.EnumWindows( ( hWnd, lParam ) =>
+            {
+                uint processId;
+                NativeMethods.GetWindowThreadProcessId( hWnd, out processId );
+
+                if ( processId != runningInstance.Id )
+                    return true;
+
+                if ( fallbackWindowHandle == IntPtr.Zero )
+                    fallbackWindowHandle = hWnd;
+
+                int titleLength = NativeMethods.GetWindowTextLength( hWnd );
+
+                if ( titleLength <= 0 )
+                    return true;
+
+                StringBuilder title = new StringBuilder( titleLength + 1 );
+                NativeMethods.GetWindowText( hWnd, title, title.Capacity );
+
+                if ( string.Equals( title.ToString(), "KeepAliveHD", StringComparison.Ordinal ) )
+                {
+                    windowHandle = hWnd;
+                    return false;
+                }
+
+                return true;
+            }, IntPtr.Zero );
+
+            return windowHandle != IntPtr.Zero ? windowHandle : fallbackWindowHandle;
         }
 
         #endregion

@@ -623,6 +623,8 @@ namespace KeepAliveHD.Forms
         {
             if ( chkSystemHideInTray.ContainsFocus )
                 AppConfiguration.HideInTray = chkSystemHideInTray.Checked;
+
+            UpdateTraySettingsState();
         }
 
         private void chkMinimizeOnClose_CheckedChanged( object sender, EventArgs e )
@@ -635,6 +637,8 @@ namespace KeepAliveHD.Forms
         {
             if ( chkHideTrayIcon.ContainsFocus )
                 AppConfiguration.HideTrayIcon = chkHideTrayIcon.Checked;
+
+            UpdateTrayIconVisibility();
         }
 
         private void chkStartMinimized_CheckedChanged( object sender, EventArgs e )
@@ -871,6 +875,7 @@ namespace KeepAliveHD.Forms
         {
             chkSystemAutoRun.Checked = AppConfiguration.AutoRunOnStartup;
             chkSystemHideInTray.Checked = AppConfiguration.HideInTray;
+            chkHideTrayIcon.Checked = AppConfiguration.HideTrayIcon;
             chkMinimizeOnClose.Checked = AppConfiguration.MinimizeOnClose;
             numTimeAmountWriting.Value = AppConfiguration.TurnOffWhenUserInactiveTimeInterval;
             Helpers.SelectItemValue( cboTimeUnitWriting, AppConfiguration.TurnOffWhenUserInactiveTimeUnit );
@@ -888,6 +893,7 @@ namespace KeepAliveHD.Forms
             SetEngineStatus( this.WritingEnabled ? EngineStatus.Started : EngineStatus.Stopped );
 
             UpdateIdleMonitoringState();
+            UpdateTraySettingsState();
             ApplyCountdownTimerVisibility();
         }
 
@@ -919,7 +925,7 @@ namespace KeepAliveHD.Forms
         {
             if ( !_restoringFromTray && this.WindowState == FormWindowState.Minimized && chkSystemHideInTray.Checked == true )
             {
-                ntfTray.Visible = true;
+                UpdateTrayIconVisibility();
                 ntfTray.BalloonTipText = "KeepAliveHD";
                 ntfTray.Text = "KeepAliveHD";
                 this.ShowInTaskbar = false;
@@ -930,17 +936,30 @@ namespace KeepAliveHD.Forms
 
         private void ShowMainWindow()
         {
+            if ( IsDisposed )
+                return;
+
+            if ( InvokeRequired )
+            {
+                BeginInvoke( new Action( ShowMainWindow ) );
+                return;
+            }
+
             _restoringFromTray = true;
 
             try
             {
+                _startHiddenInTray = false;
                 ntfTray.Visible = false;
                 ShowInTaskbar = true;
-                Visible = true;
-                Show();
                 WindowState = FormWindowState.Normal;
+                Show();
+                Visible = true;
+                NativeMethods.ShowWindow( Handle, NativeMethods.SW_RESTORE );
+                NativeMethods.ShowWindow( Handle, NativeMethods.SW_SHOWNORMAL );
                 BringToFront();
                 Activate();
+                NativeMethods.SetForegroundWindow( Handle );
             }
             finally
             {
@@ -949,8 +968,51 @@ namespace KeepAliveHD.Forms
                     _restoringFromTray = false;
                     BringToFront();
                     Activate();
+                    NativeMethods.SetForegroundWindow( Handle );
                 } ) );
             }
+        }
+
+        private void ShowTrayIconOnly()
+        {
+            if ( IsDisposed )
+                return;
+
+            if ( InvokeRequired )
+            {
+                BeginInvoke( new Action( ShowTrayIconOnly ) );
+                return;
+            }
+
+            ntfTray.BalloonTipText = "KeepAliveHD";
+            ntfTray.Text = "KeepAliveHD";
+            ntfTray.Visible = true;
+        }
+
+        private bool IsHiddenWithTrayIconSuppressed
+        {
+            get
+            {
+                return chkSystemHideInTray.Checked
+                    && chkHideTrayIcon.Checked
+                    && WindowState == FormWindowState.Minimized
+                    && !Visible;
+            }
+        }
+
+        private void UpdateTraySettingsState()
+        {
+            chkHideTrayIcon.Enabled = chkSystemHideInTray.Checked;
+
+            if ( !chkSystemHideInTray.Checked )
+                ntfTray.Visible = false;
+            else if ( WindowState == FormWindowState.Minimized && !Visible )
+                UpdateTrayIconVisibility();
+        }
+
+        private void UpdateTrayIconVisibility()
+        {
+            ntfTray.Visible = chkSystemHideInTray.Checked && !chkHideTrayIcon.Checked;
         }
 
         private void RefreshDriveStatus()
@@ -1115,7 +1177,11 @@ namespace KeepAliveHD.Forms
         {
             if ( m.Msg == NativeMethods.WM_SHOWME )
             {
-                ShowMainWindow();
+                if ( IsHiddenWithTrayIconSuppressed )
+                    ShowTrayIconOnly();
+                else
+                    ShowMainWindow();
+
                 return;
             }
 

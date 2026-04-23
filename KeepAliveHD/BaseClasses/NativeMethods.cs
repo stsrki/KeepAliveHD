@@ -1,7 +1,7 @@
 #region Using Directives
 using System;
-using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 #endregion
 
@@ -20,6 +20,16 @@ namespace KeepAliveHD.BaseClasses
 
         public const Int32 WM_LBUTTONDOWN = 0x0201;
 
+        public const int SW_SHOWNORMAL = 1;
+
+        public const int SW_RESTORE = 9;
+
+        #endregion
+
+        #region Delegates
+
+        public delegate bool EnumWindowsProc( IntPtr hWnd, IntPtr lParam );
+
         #endregion
 
         #region Methods
@@ -35,6 +45,24 @@ namespace KeepAliveHD.BaseClasses
 
         [DllImport( "user32.dll" )]
         public static extern int SendMessage( IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam );
+
+        [DllImport( "user32.dll" )]
+        public static extern bool ShowWindow( IntPtr hWnd, int nCmdShow );
+
+        [DllImport( "user32.dll" )]
+        public static extern bool SetForegroundWindow( IntPtr hWnd );
+
+        [DllImport( "user32.dll" )]
+        public static extern bool EnumWindows( EnumWindowsProc lpEnumFunc, IntPtr lParam );
+
+        [DllImport( "user32.dll" )]
+        public static extern uint GetWindowThreadProcessId( IntPtr hWnd, out uint processId );
+
+        [DllImport( "user32.dll", CharSet = CharSet.Auto )]
+        public static extern int GetWindowTextLength( IntPtr hWnd );
+
+        [DllImport( "user32.dll", CharSet = CharSet.Auto )]
+        public static extern int GetWindowText( IntPtr hWnd, StringBuilder lpString, int nMaxCount );
 
         [DllImport( "user32.dll" )]
         public static extern int mouse_event( int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo );

@@ -1,14 +1,12 @@
 ﻿#region Using Directives
 using System;
-using System.Data;
 using System.Collections.Generic;
-using System.Linq;
-using System.Data.Linq;
-using System.Text;
-using System.Windows.Forms;
+using System.Data;
 using System.IO;
-using System.Xml.Linq;
+using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
+using System.Xml.Linq;
 #endregion
 
 namespace KeepAliveHD.Database
@@ -37,7 +35,14 @@ namespace KeepAliveHD.Database
 
         public static void Load()
         {
+            _drives.Clear();
+
             string sOldDrivesFilePath = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DrivesFileName );
+
+            var drivesDirectory = Path.GetDirectoryName( DrivesFilePath );
+
+            if ( !Directory.Exists( drivesDirectory ) )
+                Directory.CreateDirectory( drivesDirectory );
 
             if ( File.Exists( sOldDrivesFilePath ) && !File.Exists( DrivesFilePath ) )
             {
@@ -73,6 +78,11 @@ namespace KeepAliveHD.Database
 
         private static void Save()
         {
+            var drivesDirectory = Path.GetDirectoryName( DrivesFilePath );
+
+            if ( !Directory.Exists( drivesDirectory ) )
+                Directory.CreateDirectory( drivesDirectory );
+
             XElement doc = new XElement( "Root",
                   from d in _drives
                   select new XElement( "DriveInfo",
@@ -167,9 +177,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 
@@ -195,9 +205,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 
@@ -219,9 +229,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 
@@ -241,9 +251,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 

@@ -1,7 +1,6 @@
 #region Using Directives
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -48,8 +47,6 @@ namespace KeepAliveHD.Forms
 
         private Random _random = new Random( Guid.NewGuid().GetHashCode() );
 
-        private bool _startedFromTaskScheduler = false;
-
         #endregion
 
         #region Constructors
@@ -59,8 +56,6 @@ namespace KeepAliveHD.Forms
             InitializeComponent();
 
             _minimize = minimize;
-
-            _startedFromTaskScheduler = Directory.GetCurrentDirectory() != Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location );
         }
 
         #endregion
@@ -180,10 +175,7 @@ namespace KeepAliveHD.Forms
 
         private void ctxTrayShow_Click( object sender, EventArgs e )
         {
-            ntfTray.Visible = false;
-            this.WindowState = FormWindowState.Normal;
-            this.ShowInTaskbar = true;
-            this.Show();
+            ShowMainWindow();
         }
 
         private void ctxTrayClose_Click( object sender, EventArgs e )
@@ -196,10 +188,7 @@ namespace KeepAliveHD.Forms
         {
             if ( e.Button == MouseButtons.Left )
             {
-                ntfTray.Visible = false;
-                this.WindowState = FormWindowState.Normal;
-                this.ShowInTaskbar = true;
-                this.Show();
+                ShowMainWindow();
             }
             else if ( e.Button == MouseButtons.Right )
             {
@@ -216,17 +205,17 @@ namespace KeepAliveHD.Forms
 
         private void lnkHomepage_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
-            Process.Start( "https://github.com/stsrki/keepalivehd" );
+            OpenWithShell( "https://github.com/stsrki/keepalivehd" );
         }
 
         private void lnkIssues_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
-            Process.Start( "https://github.com/stsrki/keepalivehd/issues" );
+            OpenWithShell( "https://github.com/stsrki/keepalivehd/issues" );
         }
 
         private void lnkDonations_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
-            Process.Start( "https://www.patreon.com/mladenmacanovic" );
+            OpenWithShell( "https://www.patreon.com/mladenmacanovic" );
         }
 
         private void btnOpenLogDir_Click( object sender, EventArgs e )
@@ -236,7 +225,7 @@ namespace KeepAliveHD.Forms
                 string directory = Path.GetDirectoryName( LogManager.LogFullPath );
 
                 if ( Directory.Exists( directory ) )
-                    Process.Start( new ProcessStartInfo { FileName = "explorer.exe", Arguments = directory, WindowStyle = ProcessWindowStyle.Normal } );
+                    OpenWithShell( directory );
             }
             catch
             {
@@ -343,7 +332,7 @@ namespace KeepAliveHD.Forms
             }
 
             string volumeName = string.Empty;
-            bool ignoreVolumeNames = ApplicationConfiguration.IgnoreVolumeNames;
+            bool ignoreVolumeNames = AppConfiguration.IgnoreVolumeNames;
 
             try
             {
@@ -361,12 +350,12 @@ namespace KeepAliveHD.Forms
                 {
                     if ( driveInfo.Operation == "r" )
                     {
-                        var fileNames = Directory.GetFiles( driveInfo.Drive, "*.*" ).Take( 5 ).ToList();
+                        var fileNames = Directory.EnumerateFiles( driveInfo.Drive, "*.*" ).Take( 5 ).ToList();
 
                         if ( fileNames != null && fileNames.Count > 0 )
                         {
                             // get random file
-                            var fileName = fileNames[_random.Next( Math.Max( fileNames.Count - 1, 1 ) )];
+                            var fileName = fileNames[_random.Next( fileNames.Count )];
 
                             if ( fileName != null )
                             {
@@ -379,14 +368,14 @@ namespace KeepAliveHD.Forms
                                         {
                                             // read random byte from the file
                                             var maxOffset = reader.Length > int.MaxValue ? int.MaxValue : (int)reader.Length;
-                                            var offset = _random.Next( Math.Max( maxOffset - 1, 1 ) );
+                                            var offset = _random.Next( maxOffset );
 
                                             //LogManager.Write( "Read one byte at location {0} from file '{1}'", offset, fileName );
 
                                             reader.Seek( offset, SeekOrigin.Begin );
 
                                             var data = new byte[1];
-                                            reader.Read( data, 0, 1 );
+                                            reader.ReadExactly( data, 0, 1 );
                                         }
                                     }
                                 }
@@ -404,7 +393,7 @@ namespace KeepAliveHD.Forms
 
                         driveInfo.Connected = true;
 
-                        if ( ApplicationConfiguration.DeleteTextFile )
+                        if ( AppConfiguration.DeleteTextFile )
                         {
                             if ( File.Exists( fileName ) )
                             {
@@ -551,7 +540,7 @@ namespace KeepAliveHD.Forms
         {
             SetEngineStatus( EngineStatus.Started );
 
-            ApplicationConfiguration.WritingEnabled = true;
+            AppConfiguration.WritingEnabled = true;
             InitialiseTimers( this.WritingEnabled );
             LoadDrives();
         }
@@ -560,7 +549,7 @@ namespace KeepAliveHD.Forms
         {
             SetEngineStatus( EngineStatus.Stopped );
 
-            ApplicationConfiguration.WritingEnabled = false;
+            AppConfiguration.WritingEnabled = false;
             InitialiseTimers( this.WritingEnabled );
             LoadDrives();
         }
@@ -568,38 +557,38 @@ namespace KeepAliveHD.Forms
         private void chkSystemAutoRun_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkSystemAutoRun.ContainsFocus )
-                ApplicationConfiguration.AutoRunOnStartup = chkSystemAutoRun.Checked;
+                AppConfiguration.AutoRunOnStartup = chkSystemAutoRun.Checked;
         }
 
         private void chkSystemHideInTray_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkSystemHideInTray.ContainsFocus )
-                ApplicationConfiguration.HideInTray = chkSystemHideInTray.Checked;
+                AppConfiguration.HideInTray = chkSystemHideInTray.Checked;
         }
 
         private void chkMinimizeOnClose_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkMinimizeOnClose.ContainsFocus )
-                ApplicationConfiguration.MinimizeOnClose = chkMinimizeOnClose.Checked;
+                AppConfiguration.MinimizeOnClose = chkMinimizeOnClose.Checked;
         }
 
         private void chkHideTrayIcon_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkHideTrayIcon.ContainsFocus )
-                ApplicationConfiguration.HideTrayIcon = chkHideTrayIcon.Checked;
+                AppConfiguration.HideTrayIcon = chkHideTrayIcon.Checked;
         }
 
         private void chkStartMinimized_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkStartMinimized.ContainsFocus )
-                ApplicationConfiguration.StartMinimized = chkStartMinimized.Checked;
+                AppConfiguration.StartMinimized = chkStartMinimized.Checked;
         }
 
         private void chkTurnOffWhenUserInactive_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkTurnOffWhenUserInactive.ContainsFocus )
             {
-                ApplicationConfiguration.TurnOffWhenUserInactive = chkTurnOffWhenUserInactive.Checked;
+                AppConfiguration.TurnOffWhenUserInactive = chkTurnOffWhenUserInactive.Checked;
                 tmrIdle.Enabled = chkTurnOffWhenUserInactive.Checked;
             }
 
@@ -609,26 +598,26 @@ namespace KeepAliveHD.Forms
         private void chkDeleteTextFile_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkDeleteTextFile.ContainsFocus )
-                ApplicationConfiguration.DeleteTextFile = chkDeleteTextFile.Checked;
+                AppConfiguration.DeleteTextFile = chkDeleteTextFile.Checked;
         }
 
         private void chkIgnoreVolumeNames_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkIgnoreVolumeNames.ContainsFocus )
-                ApplicationConfiguration.IgnoreVolumeNames = chkIgnoreVolumeNames.Checked;
+                AppConfiguration.IgnoreVolumeNames = chkIgnoreVolumeNames.Checked;
         }
 
         private void chkLogMessages_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkLogMessages.ContainsFocus )
-                ApplicationConfiguration.LogMessages = chkLogMessages.Checked;
+                AppConfiguration.LogMessages = chkLogMessages.Checked;
         }
 
         private void numTimeAmount_ValueChanged( object sender, EventArgs e )
         {
             if ( numTimeAmount.ContainsFocus )
             {
-                ApplicationConfiguration.TurnOffWhenUserInactiveTimeInterval = (int)numTimeAmount.Value;
+                AppConfiguration.TurnOffWhenUserInactiveTimeInterval = (int)numTimeAmount.Value;
             }
 
             string sTimeUnit = ( (ComboBoxItem)cboTimeUnit.SelectedItem ).Value;
@@ -642,7 +631,7 @@ namespace KeepAliveHD.Forms
         {
             if ( cboTimeUnit.ContainsFocus )
             {
-                ApplicationConfiguration.TurnOffWhenUserInactiveTimeUnit = ( (ComboBoxItem)cboTimeUnit.SelectedItem ).Value;
+                AppConfiguration.TurnOffWhenUserInactiveTimeUnit = ( (ComboBoxItem)cboTimeUnit.SelectedItem ).Value;
             }
 
             numTimeAmount_ValueChanged( null, null );
@@ -651,7 +640,7 @@ namespace KeepAliveHD.Forms
         private void chkDelayWriteOnResume_CheckedChanged( object sender, EventArgs e )
         {
             if ( chkDelayWriteOnResume.ContainsFocus )
-                ApplicationConfiguration.DelayWriteOnSystemResume = chkDelayWriteOnResume.Checked;
+                AppConfiguration.DelayWriteOnSystemResume = chkDelayWriteOnResume.Checked;
         }
 
         #endregion
@@ -695,7 +684,7 @@ namespace KeepAliveHD.Forms
             switch ( e.Mode )
             {
                 case PowerModes.Resume:
-                    if ( ApplicationConfiguration.DelayWriteOnSystemResume )
+                    if ( AppConfiguration.DelayWriteOnSystemResume )
                         _resumedFromSleep = DateTime.Now;
                     break;
                 case PowerModes.Suspend:
@@ -789,17 +778,17 @@ namespace KeepAliveHD.Forms
 
         private void FillSettings()
         {
-            chkSystemAutoRun.Checked = ApplicationConfiguration.AutoRunOnStartup;
-            chkSystemHideInTray.Checked = ApplicationConfiguration.HideInTray;
-            chkMinimizeOnClose.Checked = ApplicationConfiguration.MinimizeOnClose;
-            numTimeAmount.Value = ApplicationConfiguration.TurnOffWhenUserInactiveTimeInterval;
-            Helpers.SelectItemValue( cboTimeUnit, ApplicationConfiguration.TurnOffWhenUserInactiveTimeUnit );
-            chkTurnOffWhenUserInactive.Checked = ApplicationConfiguration.TurnOffWhenUserInactive;
-            chkDeleteTextFile.Checked = ApplicationConfiguration.DeleteTextFile;
-            chkIgnoreVolumeNames.Checked = ApplicationConfiguration.IgnoreVolumeNames;
-            chkLogMessages.Checked = ApplicationConfiguration.LogMessages;
-            chkStartMinimized.Checked = ApplicationConfiguration.StartMinimized;
-            chkDelayWriteOnResume.Checked = ApplicationConfiguration.DelayWriteOnSystemResume;
+            chkSystemAutoRun.Checked = AppConfiguration.AutoRunOnStartup;
+            chkSystemHideInTray.Checked = AppConfiguration.HideInTray;
+            chkMinimizeOnClose.Checked = AppConfiguration.MinimizeOnClose;
+            numTimeAmount.Value = AppConfiguration.TurnOffWhenUserInactiveTimeInterval;
+            Helpers.SelectItemValue( cboTimeUnit, AppConfiguration.TurnOffWhenUserInactiveTimeUnit );
+            chkTurnOffWhenUserInactive.Checked = AppConfiguration.TurnOffWhenUserInactive;
+            chkDeleteTextFile.Checked = AppConfiguration.DeleteTextFile;
+            chkIgnoreVolumeNames.Checked = AppConfiguration.IgnoreVolumeNames;
+            chkLogMessages.Checked = AppConfiguration.LogMessages;
+            chkStartMinimized.Checked = AppConfiguration.StartMinimized;
+            chkDelayWriteOnResume.Checked = AppConfiguration.DelayWriteOnSystemResume;
 
             SetEngineStatus( this.WritingEnabled ? EngineStatus.Started : EngineStatus.Stopped );
 
@@ -824,6 +813,31 @@ namespace KeepAliveHD.Forms
             }
         }
 
+        private void ShowMainWindow()
+        {
+            ntfTray.Visible = false;
+            ShowInTaskbar = true;
+
+            if ( WindowState == FormWindowState.Minimized )
+                WindowState = FormWindowState.Normal;
+
+            Show();
+
+            if ( !Visible )
+                Visible = true;
+
+            Activate();
+        }
+
+        private static void OpenWithShell( string target )
+        {
+            Process.Start( new ProcessStartInfo
+            {
+                FileName = target,
+                UseShellExecute = true
+            } );
+        }
+
         private void SetDrivesEditMode()
         {
             btnDriveEdit.Enabled = dgDrives.SelectedRows.Count == 1; // enable edit only when one drive is selected
@@ -837,6 +851,17 @@ namespace KeepAliveHD.Forms
         private void InvokeGUIThread( Action action )
         {
             this.Invoke( action );
+        }
+
+        protected override void WndProc( ref Message m )
+        {
+            if ( m.Msg == NativeMethods.WM_SHOWME )
+            {
+                ShowMainWindow();
+                return;
+            }
+
+            base.WndProc( ref m );
         }
 
         #endregion
@@ -1028,7 +1053,7 @@ namespace KeepAliveHD.Forms
         {
             get
             {
-                return _startedFromTaskScheduler || ApplicationConfiguration.WritingEnabled;
+                return AppConfiguration.WritingEnabled;
             }
         }
 

@@ -1,20 +1,18 @@
 ﻿#region Using Directives
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Configuration;
-using System.Xml.Serialization;
 using System.IO;
-using System.Text;
-using Microsoft.Win32;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Xml.Serialization;
+using Microsoft.Win32;
 #endregion
 
 namespace KeepAliveHD.BaseClasses
 {
-    public class ApplicationConfiguration
+    public class AppConfiguration
     {
         #region Classes
 
@@ -22,6 +20,11 @@ namespace KeepAliveHD.BaseClasses
         [XmlRoot( "Settings" )]
         public class Settings
         {
+            public Settings()
+            {
+                Sections = new List<SettingSections>();
+            }
+
             [XmlElement( "Section", typeof( SettingSections ) )]
             public List<SettingSections> Sections { get; set; }
         }
@@ -29,6 +32,11 @@ namespace KeepAliveHD.BaseClasses
         [Serializable()]
         public class SettingSections
         {
+            public SettingSections()
+            {
+                Items = new List<SettingSectionItem>();
+            }
+
             [XmlAttribute( "Name" )]
             public string Name { get; set; }
 
@@ -66,7 +74,7 @@ namespace KeepAliveHD.BaseClasses
 
         #region Constructors
 
-        public ApplicationConfiguration()
+        public AppConfiguration()
         {
             SettingsDirectory = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ), "KeepAliveHD" );
 
@@ -95,12 +103,29 @@ namespace KeepAliveHD.BaseClasses
             using ( StreamReader reader = new StreamReader( Path.Combine( SettingsDirectory, SettingsFileName ), Encoding.UTF8 ) )
             {
                 _settings = (Settings)serializer.Deserialize( reader );
-                reader.Close();
             }
+
+            if ( _settings == null )
+                _settings = new Settings();
+
+            if ( _settings.Sections == null )
+                _settings.Sections = new List<SettingSections>();
+
+            foreach ( var section in _settings.Sections.Where( x => x != null && x.Items == null ) )
+                section.Items = new List<SettingSectionItem>();
         }
 
         public static void Save()
         {
+            if ( !Directory.Exists( SettingsDirectory ) )
+                Directory.CreateDirectory( SettingsDirectory );
+
+            if ( _settings == null )
+                _settings = new Settings();
+
+            if ( _settings.Sections == null )
+                _settings.Sections = new List<SettingSections>();
+
             XmlSerializer serializer = new XmlSerializer( typeof( Settings ) );
             using ( StreamWriter writer = new StreamWriter( Path.Combine( SettingsDirectory, SettingsFileName ) ) )
             {
@@ -120,6 +145,12 @@ namespace KeepAliveHD.BaseClasses
 
         private static void SetValue( string sectionName, string key, string value )
         {
+            if ( _settings == null )
+                _settings = new Settings();
+
+            if ( _settings.Sections == null )
+                _settings.Sections = new List<SettingSections>();
+
             SettingSectionItem item = ( from s in _settings.Sections from i in s.Items where s.Name == sectionName && i.Key == key select i ).SingleOrDefault();
 
             if ( item != null )

@@ -1,12 +1,9 @@
 ﻿#region Using Directives
 using System;
-using System.Data;
 using System.Collections.Generic;
-using System.Linq;
-using System.Data.Linq;
-using System.Text;
-using System.Windows.Forms;
+using System.Data;
 using System.Reflection;
+using System.Windows.Forms;
 #endregion
 
 namespace KeepAliveHD.BaseClasses

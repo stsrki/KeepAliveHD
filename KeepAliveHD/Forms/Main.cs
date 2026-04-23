@@ -72,6 +72,7 @@ namespace KeepAliveHD.Forms
                     this.WindowState = FormWindowState.Minimized;
 
                 dgDrives.AutoGenerateColumns = dgConnectedDrives.AutoGenerateColumns = false;
+                dgConnectedDrives.CellFormatting += dgConnectedDrives_CellFormatting;
 
                 Database.DatabaseManager.Load();
 
@@ -734,8 +735,8 @@ namespace KeepAliveHD.Forms
                       {
                           Drive = d.RootDirectory == null ? string.Empty : d.RootDirectory.FullName,
                           VolumeName = d.VolumeLabel,
-                          TotalSize = GetDiskTotalSize( d ),
-                          FreeSpace = GetDiskTotalFreeSpace( d ),
+                          TotalSize = d.TotalSize,
+                          FreeSpace = d.TotalFreeSpace,
                           d.DriveType
                       } ).ToList() );
             }
@@ -743,32 +744,6 @@ namespace KeepAliveHD.Forms
             {
                 LogManager.Write( exc.Message );
                 MessageBox.Show( exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1 );
-            }
-        }
-
-        private string GetDiskTotalSize( DriveInfo d )
-        {
-            try
-            {
-                return Helpers.ToFileSize( d.TotalSize );
-            }
-            catch ( Exception exc )
-            {
-                LogManager.Write( "Failed to get disk total size: " + exc.Message );
-                return string.Empty;
-            }
-        }
-
-        private string GetDiskTotalFreeSpace( DriveInfo d )
-        {
-            try
-            {
-                return Helpers.ToFileSize( d.TotalFreeSpace );
-            }
-            catch ( Exception exc )
-            {
-                LogManager.Write( "Failed to get disk total free space: " + exc.Message );
-                return string.Empty;
             }
         }
 
@@ -851,6 +826,28 @@ namespace KeepAliveHD.Forms
         private void InvokeGUIThread( Action action )
         {
             this.Invoke( action );
+        }
+
+        private void dgConnectedDrives_CellFormatting( object sender, DataGridViewCellFormattingEventArgs e )
+        {
+            if ( e.RowIndex < 0 )
+                return;
+
+            if ( e.ColumnIndex != InfoTotalSize.Index && e.ColumnIndex != InfoFreeSpace.Index )
+                return;
+
+            if ( e.Value == null || e.Value == DBNull.Value )
+                return;
+
+            try
+            {
+                e.Value = Helpers.ToFileSize( Convert.ToInt64( e.Value ) );
+                e.FormattingApplied = true;
+            }
+            catch ( Exception exc )
+            {
+                LogManager.Write( "Failed to format disk size: " + exc.Message );
+            }
         }
 
         protected override void WndProc( ref Message m )

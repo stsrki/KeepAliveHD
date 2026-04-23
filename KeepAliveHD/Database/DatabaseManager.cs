@@ -100,22 +100,26 @@ namespace KeepAliveHD.Database
             doc.Save( DrivesFilePath );
         }
 
-        public static void FillDrives( DataGridView dg, bool enabled )
+        public static void FillDrives( DataGridView dg, Func<DriveInfo, bool> isEnabled )
         {
-            var list = from d in _drives
-                       select new
-                       {
-                           d.ID,
-                           d.Drive,
-                           VolumeName = string.Join( ", ", d.VolumeNames.Take( 3 ) ) + ( d.VolumeNames.Count > 3 ? " ..." : "" ),
-                           d.TimeInterval,
-                           TimeIntervalText = d.TimeInterval.ToString() + ( d.TimeUnit == "s" ? " seconds" : d.TimeUnit == "m" ? " minutes" : d.TimeUnit == "h" ? " hours" : " unknown" ) + ( d.Operation == "r" ? " (read)" : " (write)" ),
-                           NextRunText = GetNextRunText( d, enabled, DateTime.Now ),
-                           d.TimeUnit,
-                           d.Status,
-                           d.Connected,
-                           StatusText = d.Connected == false ? "DISCONNECTED" : ( d.Status == 0 ? "SUSPENDED" : enabled == false ? "DISABLED" : "ENABLED" )
-                       };
+            var list = _drives.Select( d =>
+            {
+                bool enabled = isEnabled == null ? true : isEnabled( d );
+
+                return new
+                {
+                    d.ID,
+                    d.Drive,
+                    VolumeName = string.Join( ", ", d.VolumeNames.Take( 3 ) ) + ( d.VolumeNames.Count > 3 ? " ..." : "" ),
+                    d.TimeInterval,
+                    TimeIntervalText = d.TimeInterval.ToString() + ( d.TimeUnit == "s" ? " seconds" : d.TimeUnit == "m" ? " minutes" : d.TimeUnit == "h" ? " hours" : " unknown" ) + ( d.Operation == "r" ? " (read)" : " (write)" ),
+                    NextRunText = GetNextRunText( d, enabled, DateTime.Now ),
+                    d.TimeUnit,
+                    d.Status,
+                    d.Connected,
+                    StatusText = d.Connected == false ? "DISCONNECTED" : ( d.Status == 0 ? "SUSPENDED" : enabled == false ? "DISABLED" : "ENABLED" )
+                };
+            } );
 
             dg.DataSource = BaseClasses.Helpers.LINQToDataTable( list );
         }

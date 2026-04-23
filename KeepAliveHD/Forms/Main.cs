@@ -33,7 +33,13 @@ namespace KeepAliveHD.Forms
 
         private uint _idleTime = 0;
 
-        private uint _disableTimersAfter = 0;
+        private uint _disableWritingAfter = 0;
+
+        private uint _disableReadingAfter = 0;
+
+        private bool _userInactiveWriting = false;
+
+        private bool _userInactiveReading = false;
 
         private bool _close = false;
 
@@ -69,6 +75,9 @@ namespace KeepAliveHD.Forms
             _countdownTimer.Interval = 1000;
             _countdownTimer.Tick += CountdownTimer_Tick;
             chkShowCountdownTimer.CheckedChanged += chkShowCountdownTimer_CheckedChanged;
+            chkTurnOffWhenUserInactiveReading.CheckedChanged += chkTurnOffWhenUserInactiveReading_CheckedChanged;
+            numTimeAmountReading.ValueChanged += numTimeAmountReading_ValueChanged;
+            cboTimeUnitReading.SelectedIndexChanged += cboTimeUnitReading_SelectedIndexChanged;
         }
 
         #endregion
@@ -90,9 +99,12 @@ namespace KeepAliveHD.Forms
 
                 Database.DatabaseManager.Load();
 
-                cboTimeUnit.Items.Add( new ComboBoxItem( "minutes", "m" ) );
-                cboTimeUnit.Items.Add( new ComboBoxItem( "hours", "h" ) );
-                cboTimeUnit.SelectedIndex = 0;
+                cboTimeUnitWriting.Items.Add( new ComboBoxItem( "minutes", "m" ) );
+                cboTimeUnitWriting.Items.Add( new ComboBoxItem( "hours", "h" ) );
+                cboTimeUnitWriting.SelectedIndex = 0;
+                cboTimeUnitReading.Items.Add( new ComboBoxItem( "minutes", "m" ) );
+                cboTimeUnitReading.Items.Add( new ComboBoxItem( "hours", "h" ) );
+                cboTimeUnitReading.SelectedIndex = 0;
 
                 FillSettings();
 
@@ -102,8 +114,7 @@ namespace KeepAliveHD.Forms
 
                 tsDrives.Visible = tsConnectedDrives.Visible = true;
 
-                tmrIdle.Enabled = chkTurnOffWhenUserInactive.Checked;
-                numTimeAmount.Enabled = cboTimeUnit.Enabled = chkTurnOffWhenUserInactive.Checked;
+                UpdateIdleMonitoringState();
 
                 SetMinimizeMode();
 
@@ -260,8 +271,6 @@ namespace KeepAliveHD.Forms
 
         private void InitialiseTimers( bool enabled )
         {
-            _timersEnabled = enabled;
-
             var driveInfoList = Database.DatabaseManager.GetAll();
 
             foreach ( var driveInfo in driveInfoList )
@@ -295,7 +304,9 @@ namespace KeepAliveHD.Forms
                         break;
                 }
 
-                if ( enabled && ( driveInfo.Status == 1 ) )
+                bool driveEnabled = IsDriveOperationEnabled( driveInfo, enabled );
+
+                if ( driveEnabled )
                 {
                     ManageDriveOperation( driveInfo );
                     ScheduleNextRun( timer, driveInfo );
@@ -303,14 +314,20 @@ namespace KeepAliveHD.Forms
                 else
                     driveInfo.NextRunAt = null;
 
-                timer.Enabled = enabled && ( driveInfo.Status == 1 );
+                timer.Enabled = driveEnabled;
             }
+
+            _timersEnabled = driveInfoList.Any( x => IsDriveOperationEnabled( x, enabled ) );
 
             if ( enabled )
             {
-                if ( driveInfoList.All( x => x.Status == 1 && x.Connected ) )
+                var activeDriveInfoList = driveInfoList.Where( x => IsDriveOperationEnabled( x, enabled ) ).ToList();
+
+                if ( activeDriveInfoList.Count == 0 )
+                    ntfTray.Icon = Properties.Resources.tray_normal;
+                else if ( activeDriveInfoList.All( x => x.Status == 1 && x.Connected ) )
                     ntfTray.Icon = Properties.Resources.tray_good;
-                else if ( driveInfoList.All( x => x.Connected == false ) )
+                else if ( activeDriveInfoList.All( x => x.Connected == false ) )
                     ntfTray.Icon = Properties.Resources.tray_disabled;
                 else
                     ntfTray.Icon = Properties.Resources.tray_partial;
@@ -478,10 +495,15 @@ namespace KeepAliveHD.Forms
             // divide by 1000 to transform the milliseconds to seconds and by 60 to convert to minutes
             _idleTime = ( IdleTicks / 1000 );
 
-            if ( _idleTime == 0 && _timersEnabled == false )
+            bool shouldPauseWriting = chkTurnOffWhenUserInactiveWriting.Checked && _disableWritingAfter > 0 && _idleTime >= _disableWritingAfter;
+            bool shouldPauseReading = chkTurnOffWhenUserInactiveReading.Checked && _disableReadingAfter > 0 && _idleTime >= _disableReadingAfter;
+
+            if ( shouldPauseWriting != _userInactiveWriting || shouldPauseReading != _userInactiveReading )
+            {
+                _userInactiveWriting = shouldPauseWriting;
+                _userInactiveReading = shouldPauseReading;
                 InitialiseTimers( this.WritingEnabled );
-            else if ( _idleTime >= _disableTimersAfter && _timersEnabled && chkTurnOffWhenUserInactive.Checked )
-                InitialiseTimers( false );
+            }
 
             //this.Text = _iIdleTime.ToString();
         }
@@ -515,11 +537,7 @@ namespace KeepAliveHD.Forms
             else
             {
                 DataGridViewRow row = dgDrives.SelectedRows[0];
-
-                if ( row.Cells[DriveStatus.Index].Value.ToString() == "0" )
-                    row.DefaultCellStyle.SelectionForeColor = Color.Black;
-                else
-                    row.DefaultCellStyle.SelectionForeColor = this.WritingEnabled ? Color.Green : Color.Blue;
+                row.DefaultCellStyle.SelectionForeColor = GetDriveRowColor( row );
             }
 
             SetDrivesEditMode();
@@ -528,12 +546,7 @@ namespace KeepAliveHD.Forms
         private void dgDrives_RowsAdded( object sender, DataGridViewRowsAddedEventArgs e )
         {
             foreach ( DataGridViewRow row in dgDrives.Rows )
-            {
-                if ( row.Cells[DriveStatus.Index].Value.ToString() == "0" )
-                    row.DefaultCellStyle.ForeColor = Color.Black;
-                else
-                    row.DefaultCellStyle.ForeColor = this.WritingEnabled ? Color.Green : Color.Blue;
-            }
+                row.DefaultCellStyle.ForeColor = GetDriveRowColor( row );
         }
 
         private void dgConnectedDrives_SelectionChanged( object sender, EventArgs e )
@@ -623,15 +636,20 @@ namespace KeepAliveHD.Forms
                 AppConfiguration.StartMinimized = chkStartMinimized.Checked;
         }
 
-        private void chkTurnOffWhenUserInactive_CheckedChanged( object sender, EventArgs e )
+        private void chkTurnOffWhenUserInactiveWriting_CheckedChanged( object sender, EventArgs e )
         {
-            if ( chkTurnOffWhenUserInactive.ContainsFocus )
-            {
-                AppConfiguration.TurnOffWhenUserInactive = chkTurnOffWhenUserInactive.Checked;
-                tmrIdle.Enabled = chkTurnOffWhenUserInactive.Checked;
-            }
+            if ( chkTurnOffWhenUserInactiveWriting.ContainsFocus )
+                AppConfiguration.TurnOffWhenUserInactive = chkTurnOffWhenUserInactiveWriting.Checked;
 
-            numTimeAmount.Enabled = cboTimeUnit.Enabled = chkTurnOffWhenUserInactive.Checked;
+            UpdateIdleMonitoringState();
+        }
+
+        private void chkTurnOffWhenUserInactiveReading_CheckedChanged( object sender, EventArgs e )
+        {
+            if ( chkTurnOffWhenUserInactiveReading.ContainsFocus )
+                AppConfiguration.TurnOffReadingWhenUserInactive = chkTurnOffWhenUserInactiveReading.Checked;
+
+            UpdateIdleMonitoringState();
         }
 
         private void chkDeleteTextFile_CheckedChanged( object sender, EventArgs e )
@@ -652,28 +670,53 @@ namespace KeepAliveHD.Forms
                 AppConfiguration.LogMessages = chkLogMessages.Checked;
         }
 
-        private void numTimeAmount_ValueChanged( object sender, EventArgs e )
+        private void numTimeAmountWriting_ValueChanged( object sender, EventArgs e )
         {
-            if ( numTimeAmount.ContainsFocus )
+            if ( numTimeAmountWriting.ContainsFocus )
             {
-                AppConfiguration.TurnOffWhenUserInactiveTimeInterval = (int)numTimeAmount.Value;
+                AppConfiguration.TurnOffWhenUserInactiveTimeInterval = (int)numTimeAmountWriting.Value;
             }
 
-            string sTimeUnit = ( (ComboBoxItem)cboTimeUnit.SelectedItem ).Value;
-            int iTimeAmount = (int)numTimeAmount.Value;
+            string sTimeUnit = ( (ComboBoxItem)cboTimeUnitWriting.SelectedItem ).Value;
+            int iTimeAmount = (int)numTimeAmountWriting.Value;
 
             // convert minutes/hours into seconds
-            _disableTimersAfter = (uint)( sTimeUnit == "m" ? iTimeAmount : ( iTimeAmount * 60 ) ) * 60;
+            _disableWritingAfter = (uint)( sTimeUnit == "m" ? iTimeAmount : ( iTimeAmount * 60 ) ) * 60;
+
+            if ( IdleMonitoringEnabled )
+                InitialiseTimers( this.WritingEnabled );
         }
 
-        private void cboTimeUnit_SelectedIndexChanged( object sender, EventArgs e )
+        private void cboTimeUnitWriting_SelectedIndexChanged( object sender, EventArgs e )
         {
-            if ( cboTimeUnit.ContainsFocus )
+            if ( cboTimeUnitWriting.ContainsFocus )
             {
-                AppConfiguration.TurnOffWhenUserInactiveTimeUnit = ( (ComboBoxItem)cboTimeUnit.SelectedItem ).Value;
+                AppConfiguration.TurnOffWhenUserInactiveTimeUnit = ( (ComboBoxItem)cboTimeUnitWriting.SelectedItem ).Value;
             }
 
-            numTimeAmount_ValueChanged( null, null );
+            numTimeAmountWriting_ValueChanged( null, null );
+        }
+
+        private void numTimeAmountReading_ValueChanged( object sender, EventArgs e )
+        {
+            if ( numTimeAmountReading.ContainsFocus )
+                AppConfiguration.TurnOffReadingWhenUserInactiveTimeInterval = (int)numTimeAmountReading.Value;
+
+            string sTimeUnit = ( (ComboBoxItem)cboTimeUnitReading.SelectedItem ).Value;
+            int iTimeAmount = (int)numTimeAmountReading.Value;
+
+            _disableReadingAfter = (uint)( sTimeUnit == "m" ? iTimeAmount : ( iTimeAmount * 60 ) ) * 60;
+
+            if ( IdleMonitoringEnabled )
+                InitialiseTimers( this.WritingEnabled );
+        }
+
+        private void cboTimeUnitReading_SelectedIndexChanged( object sender, EventArgs e )
+        {
+            if ( cboTimeUnitReading.ContainsFocus )
+                AppConfiguration.TurnOffReadingWhenUserInactiveTimeUnit = ( (ComboBoxItem)cboTimeUnitReading.SelectedItem ).Value;
+
+            numTimeAmountReading_ValueChanged( null, null );
         }
 
         private void chkDelayWriteOnResume_CheckedChanged( object sender, EventArgs e )
@@ -741,7 +784,7 @@ namespace KeepAliveHD.Forms
                             timer.Enabled = false;
                     }
 
-                    tmrIdle.Enabled = chkTurnOffWhenUserInactive.Checked;
+                    tmrIdle.Enabled = IdleMonitoringEnabled;
                     _restoreTimersAfterPause = false;
 
                     if ( AppConfiguration.DelayWriteOnSystemResume )
@@ -773,7 +816,7 @@ namespace KeepAliveHD.Forms
 
         private void LoadDrives( int iID )
         {
-            Database.DatabaseManager.FillDrives( dgDrives, this.WritingEnabled );
+            Database.DatabaseManager.FillDrives( dgDrives, x => IsDriveOperationEnabled( x ) );
             Helpers.SelectRowByValue( dgDrives, DrivesID.Index, iID.ToString() );
 
             if ( dgDrives.SelectedRows.Count == 0 && dgDrives.Rows.Count > 0 )
@@ -822,9 +865,12 @@ namespace KeepAliveHD.Forms
             chkSystemAutoRun.Checked = AppConfiguration.AutoRunOnStartup;
             chkSystemHideInTray.Checked = AppConfiguration.HideInTray;
             chkMinimizeOnClose.Checked = AppConfiguration.MinimizeOnClose;
-            numTimeAmount.Value = AppConfiguration.TurnOffWhenUserInactiveTimeInterval;
-            Helpers.SelectItemValue( cboTimeUnit, AppConfiguration.TurnOffWhenUserInactiveTimeUnit );
-            chkTurnOffWhenUserInactive.Checked = AppConfiguration.TurnOffWhenUserInactive;
+            numTimeAmountWriting.Value = AppConfiguration.TurnOffWhenUserInactiveTimeInterval;
+            Helpers.SelectItemValue( cboTimeUnitWriting, AppConfiguration.TurnOffWhenUserInactiveTimeUnit );
+            numTimeAmountReading.Value = AppConfiguration.TurnOffReadingWhenUserInactiveTimeInterval;
+            Helpers.SelectItemValue( cboTimeUnitReading, AppConfiguration.TurnOffReadingWhenUserInactiveTimeUnit );
+            chkTurnOffWhenUserInactiveWriting.Checked = AppConfiguration.TurnOffWhenUserInactive;
+            chkTurnOffWhenUserInactiveReading.Checked = AppConfiguration.TurnOffReadingWhenUserInactive;
             chkDeleteTextFile.Checked = AppConfiguration.DeleteTextFile;
             chkIgnoreVolumeNames.Checked = AppConfiguration.IgnoreVolumeNames;
             chkLogMessages.Checked = AppConfiguration.LogMessages;
@@ -834,8 +880,26 @@ namespace KeepAliveHD.Forms
 
             SetEngineStatus( this.WritingEnabled ? EngineStatus.Started : EngineStatus.Stopped );
 
-            chkTurnOffWhenUserInactive_CheckedChanged( null, null );
+            UpdateIdleMonitoringState();
             ApplyCountdownTimerVisibility();
+        }
+
+        private void UpdateIdleMonitoringState()
+        {
+            bool enabled = IdleMonitoringEnabled;
+
+            tmrIdle.Enabled = enabled;
+            numTimeAmountWriting.Enabled = cboTimeUnitWriting.Enabled = chkTurnOffWhenUserInactiveWriting.Checked;
+            numTimeAmountReading.Enabled = cboTimeUnitReading.Enabled = chkTurnOffWhenUserInactiveReading.Checked;
+
+            if ( !enabled )
+            {
+                _userInactiveWriting = false;
+                _userInactiveReading = false;
+            }
+
+            if ( IsHandleCreated )
+                InitialiseTimers( this.WritingEnabled );
         }
 
         private void SetEngineStatus( EngineStatus status )
@@ -895,6 +959,36 @@ namespace KeepAliveHD.Forms
             string targetPath = driveInfo.Operation == "r" ? drivePath : Helpers.GetKeepAliveFilePath( drivePath );
 
             LogManager.Write( "Drive '{0}' {1} failed for '{2}': {3}", drivePath, operation, targetPath, exc.Message );
+        }
+
+        private bool IsDriveOperationEnabled( Database.DriveInfo driveInfo )
+        {
+            return IsDriveOperationEnabled( driveInfo, this.WritingEnabled );
+        }
+
+        private bool IsDriveOperationEnabled( Database.DriveInfo driveInfo, bool engineEnabled )
+        {
+            if ( driveInfo == null || !engineEnabled || driveInfo.Status != 1 )
+                return false;
+
+            if ( driveInfo.Operation == "r" )
+                return !_userInactiveReading;
+
+            return !_userInactiveWriting;
+        }
+
+        private Color GetDriveRowColor( DataGridViewRow row )
+        {
+            if ( row == null || row.Cells[DriveStatus.Index].Value == null )
+                return Color.Black;
+
+            if ( row.Cells[DriveStatus.Index].Value.ToString() == "0" )
+                return Color.Black;
+
+            string drive = Convert.ToString( row.Cells[DrivesLetter.Index].Value );
+            var driveInfo = Database.DatabaseManager.GetByDrive( drive );
+
+            return driveInfo != null && IsDriveOperationEnabled( driveInfo ) ? Color.Green : Color.Blue;
         }
 
         private void ApplyCountdownTimerVisibility()
@@ -959,7 +1053,7 @@ namespace KeepAliveHD.Forms
                 var driveInfo = Database.DatabaseManager.GetByDrive( drive );
 
                 if ( driveInfo != null )
-                    row.Cells[nextRunColumnIndex].Value = Database.DatabaseManager.GetNextRunText( driveInfo, this.WritingEnabled, now );
+                    row.Cells[nextRunColumnIndex].Value = Database.DatabaseManager.GetNextRunText( driveInfo, IsDriveOperationEnabled( driveInfo ), now );
             }
         }
 
@@ -1219,6 +1313,14 @@ namespace KeepAliveHD.Forms
                     return 0;
 
                 return Convert.ToInt32( dgDrives.SelectedRows[0].Cells[DrivesID.Index].Value.ToString() );
+            }
+        }
+
+        private bool IdleMonitoringEnabled
+        {
+            get
+            {
+                return chkTurnOffWhenUserInactiveWriting.Checked || chkTurnOffWhenUserInactiveReading.Checked;
             }
         }
 

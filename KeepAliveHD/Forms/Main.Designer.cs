@@ -73,6 +73,7 @@ namespace KeepAliveHD.Forms
             InfoType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             tabPageSettings = new System.Windows.Forms.TabPage();
             groupBox5 = new System.Windows.Forms.GroupBox();
+            chkShowCountdownTimer = new System.Windows.Forms.CheckBox();
             chkDelayWriteOnResume = new System.Windows.Forms.CheckBox();
             chkIgnoreVolumeNames = new System.Windows.Forms.CheckBox();
             btnOpenLogDir = new System.Windows.Forms.Button();
@@ -81,9 +82,9 @@ namespace KeepAliveHD.Forms
             groupBox2 = new System.Windows.Forms.GroupBox();
             chkStartMinimized = new System.Windows.Forms.CheckBox();
             chkHideTrayIcon = new System.Windows.Forms.CheckBox();
-            cboTimeUnit = new System.Windows.Forms.ComboBox();
-            numTimeAmount = new System.Windows.Forms.NumericUpDown();
-            chkTurnOffWhenUserInactive = new System.Windows.Forms.CheckBox();
+            cboTimeUnitWriting = new System.Windows.Forms.ComboBox();
+            numTimeAmountWriting = new System.Windows.Forms.NumericUpDown();
+            chkTurnOffWhenUserInactiveWriting = new System.Windows.Forms.CheckBox();
             chkMinimizeOnClose = new System.Windows.Forms.CheckBox();
             chkSystemHideInTray = new System.Windows.Forms.CheckBox();
             chkSystemAutoRun = new System.Windows.Forms.CheckBox();
@@ -109,7 +110,10 @@ namespace KeepAliveHD.Forms
             ctxTrayShow = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             ctxTrayClose = new System.Windows.Forms.ToolStripMenuItem();
-            chkShowCountdownTimer = new System.Windows.Forms.CheckBox();
+            label10 = new System.Windows.Forms.Label();
+            chkTurnOffWhenUserInactiveReading = new System.Windows.Forms.CheckBox();
+            cboTimeUnitReading = new System.Windows.Forms.ComboBox();
+            numTimeAmountReading = new System.Windows.Forms.NumericUpDown();
             tabMain.SuspendLayout();
             tabPageConfiguration.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -122,10 +126,11 @@ namespace KeepAliveHD.Forms
             tabPageSettings.SuspendLayout();
             groupBox5.SuspendLayout();
             groupBox2.SuspendLayout();
-            ( (System.ComponentModel.ISupportInitialize)numTimeAmount ).BeginInit();
+            ( (System.ComponentModel.ISupportInitialize)numTimeAmountWriting ).BeginInit();
             tabPageAbout.SuspendLayout();
             groupBox4.SuspendLayout();
             ctxTray.SuspendLayout();
+            ( (System.ComponentModel.ISupportInitialize)numTimeAmountReading ).BeginInit();
             SuspendLayout();
             // 
             // tabMain
@@ -509,14 +514,25 @@ namespace KeepAliveHD.Forms
             groupBox5.Controls.Add( btnOpenLogDir );
             groupBox5.Controls.Add( chkLogMessages );
             groupBox5.Controls.Add( chkDeleteTextFile );
-            groupBox5.Location = new System.Drawing.Point( 7, 156 );
+            groupBox5.Location = new System.Drawing.Point( 7, 227 );
             groupBox5.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
-            groupBox5.Size = new System.Drawing.Size( 534, 262 );
+            groupBox5.Size = new System.Drawing.Size( 534, 191 );
             groupBox5.TabIndex = 2;
             groupBox5.TabStop = false;
             groupBox5.Text = "Behaviour";
+            // 
+            // chkShowCountdownTimer
+            // 
+            chkShowCountdownTimer.AutoSize = true;
+            chkShowCountdownTimer.Location = new System.Drawing.Point( 7, 151 );
+            chkShowCountdownTimer.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            chkShowCountdownTimer.Name = "chkShowCountdownTimer";
+            chkShowCountdownTimer.Size = new System.Drawing.Size( 150, 19 );
+            chkShowCountdownTimer.TabIndex = 6;
+            chkShowCountdownTimer.Text = "Show countdown timer";
+            chkShowCountdownTimer.UseVisualStyleBackColor = true;
             // 
             // chkDelayWriteOnResume
             // 
@@ -569,7 +585,7 @@ namespace KeepAliveHD.Forms
             // 
             chkDeleteTextFile.AutoSize = true;
             chkDeleteTextFile.Location = new System.Drawing.Point( 7, 22 );
-            chkDeleteTextFile.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            chkDeleteTextFile.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 8 );
             chkDeleteTextFile.Name = "chkDeleteTextFile";
             chkDeleteTextFile.Size = new System.Drawing.Size( 228, 19 );
             chkDeleteTextFile.TabIndex = 1;
@@ -580,11 +596,15 @@ namespace KeepAliveHD.Forms
             // groupBox2
             // 
             groupBox2.Anchor =   System.Windows.Forms.AnchorStyles.Bottom  |  System.Windows.Forms.AnchorStyles.Left   |  System.Windows.Forms.AnchorStyles.Right ;
+            groupBox2.Controls.Add( cboTimeUnitReading );
+            groupBox2.Controls.Add( numTimeAmountReading );
+            groupBox2.Controls.Add( chkTurnOffWhenUserInactiveReading );
+            groupBox2.Controls.Add( label10 );
             groupBox2.Controls.Add( chkStartMinimized );
             groupBox2.Controls.Add( chkHideTrayIcon );
-            groupBox2.Controls.Add( cboTimeUnit );
-            groupBox2.Controls.Add( numTimeAmount );
-            groupBox2.Controls.Add( chkTurnOffWhenUserInactive );
+            groupBox2.Controls.Add( cboTimeUnitWriting );
+            groupBox2.Controls.Add( numTimeAmountWriting );
+            groupBox2.Controls.Add( chkTurnOffWhenUserInactiveWriting );
             groupBox2.Controls.Add( chkMinimizeOnClose );
             groupBox2.Controls.Add( chkSystemHideInTray );
             groupBox2.Controls.Add( chkSystemAutoRun );
@@ -592,7 +612,7 @@ namespace KeepAliveHD.Forms
             groupBox2.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
-            groupBox2.Size = new System.Drawing.Size( 534, 142 );
+            groupBox2.Size = new System.Drawing.Size( 534, 214 );
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "System";
@@ -600,8 +620,8 @@ namespace KeepAliveHD.Forms
             // chkStartMinimized
             // 
             chkStartMinimized.AutoSize = true;
-            chkStartMinimized.Location = new System.Drawing.Point( 7, 113 );
-            chkStartMinimized.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            chkStartMinimized.Location = new System.Drawing.Point( 7, 112 );
+            chkStartMinimized.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 8 );
             chkStartMinimized.Name = "chkStartMinimized";
             chkStartMinimized.Size = new System.Drawing.Size( 109, 19 );
             chkStartMinimized.TabIndex = 11;
@@ -612,7 +632,7 @@ namespace KeepAliveHD.Forms
             // chkHideTrayIcon
             // 
             chkHideTrayIcon.AutoSize = true;
-            chkHideTrayIcon.Location = new System.Drawing.Point( 250, 82 );
+            chkHideTrayIcon.Location = new System.Drawing.Point( 236, 82 );
             chkHideTrayIcon.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
             chkHideTrayIcon.Name = "chkHideTrayIcon";
             chkHideTrayIcon.Size = new System.Drawing.Size( 248, 19 );
@@ -622,45 +642,45 @@ namespace KeepAliveHD.Forms
             chkHideTrayIcon.Visible = false;
             chkHideTrayIcon.CheckedChanged +=  chkHideTrayIcon_CheckedChanged ;
             // 
-            // cboTimeUnit
+            // cboTimeUnitWriting
             // 
-            cboTimeUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            cboTimeUnit.FormattingEnabled = true;
-            cboTimeUnit.Location = new System.Drawing.Point( 379, 45 );
-            cboTimeUnit.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
-            cboTimeUnit.Name = "cboTimeUnit";
-            cboTimeUnit.Size = new System.Drawing.Size( 73, 23 );
-            cboTimeUnit.TabIndex = 9;
-            cboTimeUnit.SelectedIndexChanged +=  cboTimeUnit_SelectedIndexChanged ;
+            cboTimeUnitWriting.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cboTimeUnitWriting.FormattingEnabled = true;
+            cboTimeUnitWriting.Location = new System.Drawing.Point( 302, 150 );
+            cboTimeUnitWriting.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            cboTimeUnitWriting.Name = "cboTimeUnitWriting";
+            cboTimeUnitWriting.Size = new System.Drawing.Size( 73, 23 );
+            cboTimeUnitWriting.TabIndex = 9;
+            cboTimeUnitWriting.SelectedIndexChanged +=  cboTimeUnitWriting_SelectedIndexChanged ;
             // 
-            // numTimeAmount
+            // numTimeAmountWriting
             // 
-            numTimeAmount.Location = new System.Drawing.Point( 316, 45 );
-            numTimeAmount.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
-            numTimeAmount.Minimum = new decimal( new int[] { 1, 0, 0, 0 } );
-            numTimeAmount.Name = "numTimeAmount";
-            numTimeAmount.Size = new System.Drawing.Size( 56, 23 );
-            numTimeAmount.TabIndex = 8;
-            numTimeAmount.Value = new decimal( new int[] { 1, 0, 0, 0 } );
-            numTimeAmount.ValueChanged +=  numTimeAmount_ValueChanged ;
+            numTimeAmountWriting.Location = new System.Drawing.Point( 238, 150 );
+            numTimeAmountWriting.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            numTimeAmountWriting.Minimum = new decimal( new int[] { 1, 0, 0, 0 } );
+            numTimeAmountWriting.Name = "numTimeAmountWriting";
+            numTimeAmountWriting.Size = new System.Drawing.Size( 56, 23 );
+            numTimeAmountWriting.TabIndex = 8;
+            numTimeAmountWriting.Value = new decimal( new int[] { 1, 0, 0, 0 } );
+            numTimeAmountWriting.ValueChanged +=  numTimeAmountWriting_ValueChanged ;
             // 
-            // chkTurnOffWhenUserInactive
+            // chkTurnOffWhenUserInactiveWriting
             // 
-            chkTurnOffWhenUserInactive.AutoSize = true;
-            chkTurnOffWhenUserInactive.Location = new System.Drawing.Point( 294, 22 );
-            chkTurnOffWhenUserInactive.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
-            chkTurnOffWhenUserInactive.Name = "chkTurnOffWhenUserInactive";
-            chkTurnOffWhenUserInactive.Size = new System.Drawing.Size( 223, 19 );
-            chkTurnOffWhenUserInactive.TabIndex = 3;
-            chkTurnOffWhenUserInactive.Text = "Disable writing if user is not active for";
-            chkTurnOffWhenUserInactive.UseVisualStyleBackColor = true;
-            chkTurnOffWhenUserInactive.CheckedChanged +=  chkTurnOffWhenUserInactive_CheckedChanged ;
+            chkTurnOffWhenUserInactiveWriting.AutoSize = true;
+            chkTurnOffWhenUserInactiveWriting.Location = new System.Drawing.Point( 7, 151 );
+            chkTurnOffWhenUserInactiveWriting.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 8 );
+            chkTurnOffWhenUserInactiveWriting.Name = "chkTurnOffWhenUserInactiveWriting";
+            chkTurnOffWhenUserInactiveWriting.Size = new System.Drawing.Size( 223, 19 );
+            chkTurnOffWhenUserInactiveWriting.TabIndex = 3;
+            chkTurnOffWhenUserInactiveWriting.Text = "Disable writing if user is not active for";
+            chkTurnOffWhenUserInactiveWriting.UseVisualStyleBackColor = true;
+            chkTurnOffWhenUserInactiveWriting.CheckedChanged +=  chkTurnOffWhenUserInactiveWriting_CheckedChanged ;
             // 
             // chkMinimizeOnClose
             // 
             chkMinimizeOnClose.AutoSize = true;
             chkMinimizeOnClose.Location = new System.Drawing.Point( 27, 82 );
-            chkMinimizeOnClose.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            chkMinimizeOnClose.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 8 );
             chkMinimizeOnClose.Name = "chkMinimizeOnClose";
             chkMinimizeOnClose.Size = new System.Drawing.Size( 161, 19 );
             chkMinimizeOnClose.TabIndex = 2;
@@ -671,8 +691,8 @@ namespace KeepAliveHD.Forms
             // chkSystemHideInTray
             // 
             chkSystemHideInTray.AutoSize = true;
-            chkSystemHideInTray.Location = new System.Drawing.Point( 7, 55 );
-            chkSystemHideInTray.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            chkSystemHideInTray.Location = new System.Drawing.Point( 7, 52 );
+            chkSystemHideInTray.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 8 );
             chkSystemHideInTray.Name = "chkSystemHideInTray";
             chkSystemHideInTray.Size = new System.Drawing.Size( 208, 19 );
             chkSystemHideInTray.TabIndex = 1;
@@ -684,7 +704,7 @@ namespace KeepAliveHD.Forms
             // 
             chkSystemAutoRun.AutoSize = true;
             chkSystemAutoRun.Location = new System.Drawing.Point( 7, 22 );
-            chkSystemAutoRun.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            chkSystemAutoRun.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 8 );
             chkSystemAutoRun.Name = "chkSystemAutoRun";
             chkSystemAutoRun.Size = new System.Drawing.Size( 131, 19 );
             chkSystemAutoRun.TabIndex = 0;
@@ -914,16 +934,45 @@ namespace KeepAliveHD.Forms
             ctxTrayClose.Text = "Close";
             ctxTrayClose.Click +=  ctxTrayClose_Click ;
             // 
-            // chkShowCountdownTimer
+            // label10
             // 
-            chkShowCountdownTimer.AutoSize = true;
-            chkShowCountdownTimer.Location = new System.Drawing.Point( 7, 151 );
-            chkShowCountdownTimer.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
-            chkShowCountdownTimer.Name = "chkShowCountdownTimer";
-            chkShowCountdownTimer.Size = new System.Drawing.Size( 150, 19 );
-            chkShowCountdownTimer.TabIndex = 6;
-            chkShowCountdownTimer.Text = "Show countdown timer";
-            chkShowCountdownTimer.UseVisualStyleBackColor = true;
+            label10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            label10.Location = new System.Drawing.Point( 7, 139 );
+            label10.Margin = new System.Windows.Forms.Padding( 3, 0, 3, 8 );
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size( 520, 1 );
+            label10.TabIndex = 12;
+            // 
+            // chkTurnOffWhenUserInactiveReading
+            // 
+            chkTurnOffWhenUserInactiveReading.AutoSize = true;
+            chkTurnOffWhenUserInactiveReading.Location = new System.Drawing.Point( 7, 181 );
+            chkTurnOffWhenUserInactiveReading.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 8 );
+            chkTurnOffWhenUserInactiveReading.Name = "chkTurnOffWhenUserInactiveReading";
+            chkTurnOffWhenUserInactiveReading.Size = new System.Drawing.Size( 226, 19 );
+            chkTurnOffWhenUserInactiveReading.TabIndex = 13;
+            chkTurnOffWhenUserInactiveReading.Text = "Disable reading if user is not active for";
+            chkTurnOffWhenUserInactiveReading.UseVisualStyleBackColor = true;
+            // 
+            // cboTimeUnitReading
+            // 
+            cboTimeUnitReading.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cboTimeUnitReading.FormattingEnabled = true;
+            cboTimeUnitReading.Location = new System.Drawing.Point( 302, 180 );
+            cboTimeUnitReading.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            cboTimeUnitReading.Name = "cboTimeUnitReading";
+            cboTimeUnitReading.Size = new System.Drawing.Size( 73, 23 );
+            cboTimeUnitReading.TabIndex = 15;
+            // 
+            // numTimeAmountReading
+            // 
+            numTimeAmountReading.Location = new System.Drawing.Point( 238, 180 );
+            numTimeAmountReading.Margin = new System.Windows.Forms.Padding( 4, 3, 4, 3 );
+            numTimeAmountReading.Minimum = new decimal( new int[] { 1, 0, 0, 0 } );
+            numTimeAmountReading.Name = "numTimeAmountReading";
+            numTimeAmountReading.Size = new System.Drawing.Size( 56, 23 );
+            numTimeAmountReading.TabIndex = 14;
+            numTimeAmountReading.Value = new decimal( new int[] { 1, 0, 0, 0 } );
             // 
             // Main
             // 
@@ -959,10 +1008,11 @@ namespace KeepAliveHD.Forms
             groupBox5.PerformLayout();
             groupBox2.ResumeLayout( false );
             groupBox2.PerformLayout();
-            ( (System.ComponentModel.ISupportInitialize)numTimeAmount ).EndInit();
+            ( (System.ComponentModel.ISupportInitialize)numTimeAmountWriting ).EndInit();
             tabPageAbout.ResumeLayout( false );
             groupBox4.ResumeLayout( false );
             ctxTray.ResumeLayout( false );
+            ( (System.ComponentModel.ISupportInitialize)numTimeAmountReading ).EndInit();
             ResumeLayout( false );
 
         }
@@ -985,9 +1035,9 @@ namespace KeepAliveHD.Forms
         private System.Windows.Forms.CheckBox chkSystemHideInTray;
         private System.Windows.Forms.CheckBox chkSystemAutoRun;
         private System.Windows.Forms.CheckBox chkMinimizeOnClose;
-        private System.Windows.Forms.CheckBox chkTurnOffWhenUserInactive;
-        private System.Windows.Forms.ComboBox cboTimeUnit;
-        private System.Windows.Forms.NumericUpDown numTimeAmount;
+        private System.Windows.Forms.CheckBox chkTurnOffWhenUserInactiveWriting;
+        private System.Windows.Forms.ComboBox cboTimeUnitWriting;
+        private System.Windows.Forms.NumericUpDown numTimeAmountWriting;
         private System.Windows.Forms.Timer tmrIdle;
         private System.Windows.Forms.NotifyIcon ntfTray;
         private System.Windows.Forms.ContextMenuStrip ctxTray;
@@ -1038,5 +1088,9 @@ namespace KeepAliveHD.Forms
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.CheckBox chkShowCountdownTimer;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ComboBox cboTimeUnitReading;
+        private System.Windows.Forms.NumericUpDown numTimeAmountReading;
+        private System.Windows.Forms.CheckBox chkTurnOffWhenUserInactiveReading;
     }
 }

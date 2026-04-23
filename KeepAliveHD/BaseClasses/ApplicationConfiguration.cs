@@ -250,16 +250,34 @@ namespace KeepAliveHD.BaseClasses
             set { SetValueBool( SectionName_System, "TurnOffWhenUserInactive", value ); }
         }
 
+        public static bool TurnOffReadingWhenUserInactive
+        {
+            get { return GetValueBool( SectionName_System, "TurnOffReadingWhenUserInactive", false ); }
+            set { SetValueBool( SectionName_System, "TurnOffReadingWhenUserInactive", value ); }
+        }
+
         public static int TurnOffWhenUserInactiveTimeInterval
         {
             get { return GetValueInt( SectionName_System, "TurnOffWhenUserInactiveTimeInterval", 1 ); }
             set { SetValueInt( SectionName_System, "TurnOffWhenUserInactiveTimeInterval", value ); }
         }
 
+        public static int TurnOffReadingWhenUserInactiveTimeInterval
+        {
+            get { return GetValueInt( SectionName_System, "TurnOffReadingWhenUserInactiveTimeInterval", 1 ); }
+            set { SetValueInt( SectionName_System, "TurnOffReadingWhenUserInactiveTimeInterval", value ); }
+        }
+
         public static string TurnOffWhenUserInactiveTimeUnit
         {
             get { return GetValue( SectionName_System, "TurnOffWhenUserInactiveTimeUnit", "h" ); }
             set { SetValue( SectionName_System, "TurnOffWhenUserInactiveTimeUnit", value ); }
+        }
+
+        public static string TurnOffReadingWhenUserInactiveTimeUnit
+        {
+            get { return GetValue( SectionName_System, "TurnOffReadingWhenUserInactiveTimeUnit", "h" ); }
+            set { SetValue( SectionName_System, "TurnOffReadingWhenUserInactiveTimeUnit", value ); }
         }
 
         public static bool StartMinimized

@@ -63,6 +63,10 @@ namespace KeepAliveHD.Forms
 
         private readonly Timer _countdownTimer = new Timer();
 
+        private readonly Timer _onlineStatusTimer = new Timer();
+
+        private const int OnlineStatusCheckIntervalMs = 30000;
+
         #endregion
 
         #region Constructors
@@ -82,6 +86,8 @@ namespace KeepAliveHD.Forms
 
             _countdownTimer.Interval = 1000;
             _countdownTimer.Tick += CountdownTimer_Tick;
+            _onlineStatusTimer.Interval = OnlineStatusCheckIntervalMs;
+            _onlineStatusTimer.Tick += OnlineStatusTimer_Tick;
             chkShowCountdownTimer.CheckedChanged += chkShowCountdownTimer_CheckedChanged;
             chkTurnOffWhenUserInactiveReading.CheckedChanged += chkTurnOffWhenUserInactiveReading_CheckedChanged;
             numTimeAmountReading.ValueChanged += numTimeAmountReading_ValueChanged;
@@ -122,6 +128,7 @@ namespace KeepAliveHD.Forms
                 tsDrives.Visible = tsConnectedDrives.Visible = true;
 
                 UpdateIdleMonitoringState();
+                _onlineStatusTimer.Enabled = true;
 
                 SetMinimizeMode();
 
@@ -189,7 +196,9 @@ namespace KeepAliveHD.Forms
 
             tmrIdle.Enabled = false;
             _countdownTimer.Enabled = false;
+            _onlineStatusTimer.Enabled = false;
             _countdownTimer.Dispose();
+            _onlineStatusTimer.Dispose();
 
             foreach ( var timer in _timers )
             {
@@ -326,21 +335,7 @@ namespace KeepAliveHD.Forms
 
             _timersEnabled = driveInfoList.Any( x => IsDriveOperationEnabled( x, enabled ) );
 
-            if ( enabled )
-            {
-                var activeDriveInfoList = driveInfoList.Where( x => IsDriveOperationEnabled( x, enabled ) ).ToList();
-
-                if ( activeDriveInfoList.Count == 0 )
-                    ntfTray.Icon = Properties.Resources.tray_normal;
-                else if ( activeDriveInfoList.All( x => x.Status == 1 && x.Connected ) )
-                    ntfTray.Icon = Properties.Resources.tray_good;
-                else if ( activeDriveInfoList.All( x => x.Connected == false ) )
-                    ntfTray.Icon = Properties.Resources.tray_disabled;
-                else
-                    ntfTray.Icon = Properties.Resources.tray_partial;
-            }
-            else
-                ntfTray.Icon = Properties.Resources.tray_normal;
+            UpdateTrayStatusIcon( enabled );
         }
 
         private void RemoveTimer( params string[] drives )
@@ -370,6 +365,46 @@ namespace KeepAliveHD.Forms
                     ManageDriveOperation( driveInfo );
                     ScheduleNextRun( timer, driveInfo );
                 }
+            }
+        }
+
+        private void OnlineStatusTimer_Tick( object sender, EventArgs e )
+        {
+            if ( _backgroundWorkPaused || IsDisposed )
+                return;
+
+            bool statusChanged = false;
+
+            foreach ( var driveInfo in Database.DatabaseManager.GetAll() )
+            {
+                bool isAvailable = IsDriveAvailable( driveInfo );
+
+                if ( isAvailable == driveInfo.Connected )
+                    continue;
+
+                driveInfo.Connected = isAvailable;
+                statusChanged = true;
+
+                if ( !isAvailable )
+                    continue;
+
+                if ( !IsDriveOperationEnabled( driveInfo ) )
+                    continue;
+
+                if ( !_timers.ContainsKey( driveInfo.Drive ) )
+                    continue;
+
+                Timer timer = _timers[driveInfo.Drive];
+
+                ManageDriveOperation( driveInfo );
+                ScheduleNextRun( timer, driveInfo );
+                timer.Enabled = true;
+            }
+
+            if ( statusChanged )
+            {
+                UpdateTrayStatusIcon( this.WritingEnabled );
+                RefreshDriveStatus();
             }
         }
 
@@ -1023,6 +1058,28 @@ namespace KeepAliveHD.Forms
             LoadDrives( SelectedDriveID );
         }
 
+        private void UpdateTrayStatusIcon( bool enabled )
+        {
+            if ( !enabled )
+            {
+                ntfTray.Icon = Properties.Resources.tray_normal;
+                return;
+            }
+
+            var activeDriveInfoList = Database.DatabaseManager.GetAll()
+                .Where( x => IsDriveOperationEnabled( x, enabled ) )
+                .ToList();
+
+            if ( activeDriveInfoList.Count == 0 )
+                ntfTray.Icon = Properties.Resources.tray_normal;
+            else if ( activeDriveInfoList.All( x => x.Status == 1 && x.Connected ) )
+                ntfTray.Icon = Properties.Resources.tray_good;
+            else if ( activeDriveInfoList.All( x => x.Connected == false ) )
+                ntfTray.Icon = Properties.Resources.tray_disabled;
+            else
+                ntfTray.Icon = Properties.Resources.tray_partial;
+        }
+
         private void LogDriveOperationError( Database.DriveInfo driveInfo, string drivePath, Exception exc )
         {
             string operation = driveInfo.Operation == "r" ? "read" : "write";
@@ -1045,6 +1102,31 @@ namespace KeepAliveHD.Forms
                 return !_userInactiveReading;
 
             return !_userInactiveWriting;
+        }
+
+        private bool IsDriveAvailable( Database.DriveInfo driveInfo )
+        {
+            if ( driveInfo == null )
+                return false;
+
+            string drivePath = Helpers.NormalizeDrivePath( driveInfo.Drive );
+
+            if ( !Directory.Exists( drivePath ) )
+                return false;
+
+            if ( AppConfiguration.IgnoreVolumeNames )
+                return true;
+
+            try
+            {
+                string volumeName = Helpers.GetVolumeIdentity( drivePath );
+                return driveInfo.VolumeNames.Contains( volumeName );
+            }
+            catch ( Exception exc )
+            {
+                LogManager.Write( "Failed to verify online status for '{0}': {1}", drivePath, exc.Message );
+                return false;
+            }
         }
 
         private Color GetDriveRowColor( DataGridViewRow row )

@@ -43,6 +43,10 @@ namespace KeepAliveHD.Forms
 
         private DateTime? _resumedFromSleep = null;
 
+        private bool _backgroundWorkPaused = false;
+
+        private bool _restoreTimersAfterPause = false;
+
         private ManagementEventWatcher InsertWatcher;
 
         private ManagementEventWatcher RemoveWatcher;
@@ -106,6 +110,7 @@ namespace KeepAliveHD.Forms
                 RemoveWatcher.Start();
 
                 SystemEvents.PowerModeChanged += OnPowerChange;
+                SystemEvents.SessionEnding += OnSessionEnding;
 
                 var version = this.GetType().Assembly.GetName().Version;
                 lblAppVersion.Text = string.Format( "{0}.{1}.{2} beta", version.Major, version.Minor, version.Build );
@@ -126,7 +131,10 @@ namespace KeepAliveHD.Forms
                 e.Cancel = true;
                 this.WindowState = FormWindowState.Minimized;
                 SetMinimizeMode();
+                return;
             }
+
+            PauseBackgroundWork( false );
         }
 
         private void Main_FormClosed( object sender, FormClosedEventArgs e )
@@ -146,6 +154,7 @@ namespace KeepAliveHD.Forms
                 }
 
                 SystemEvents.PowerModeChanged -= OnPowerChange;
+                SystemEvents.SessionEnding -= OnSessionEnding;
             }
             catch ( Exception exc )
             {
@@ -326,6 +335,9 @@ namespace KeepAliveHD.Forms
 
         private void ManageDriveOperation( Database.DriveInfo driveInfo )
         {
+            if ( _backgroundWorkPaused )
+                return;
+
             bool previousConnected = driveInfo.Connected;
 
             if ( _resumedFromSleep != null )
@@ -694,12 +706,31 @@ namespace KeepAliveHD.Forms
             switch ( e.Mode )
             {
                 case PowerModes.Resume:
+                    _backgroundWorkPaused = false;
+
+                    if ( _restoreTimersAfterPause && this.WritingEnabled )
+                        InitialiseTimers( this.WritingEnabled );
+                    else
+                    {
+                        foreach ( var timer in _timers.Values )
+                            timer.Enabled = false;
+                    }
+
+                    tmrIdle.Enabled = chkTurnOffWhenUserInactive.Checked;
+                    _restoreTimersAfterPause = false;
+
                     if ( AppConfiguration.DelayWriteOnSystemResume )
                         _resumedFromSleep = DateTime.Now;
                     break;
                 case PowerModes.Suspend:
+                    PauseBackgroundWork( true );
                     break;
             }
+        }
+
+        private void OnSessionEnding( object sender, SessionEndingEventArgs e )
+        {
+            PauseBackgroundWork( false );
         }
 
         #endregion
@@ -828,6 +859,20 @@ namespace KeepAliveHD.Forms
                 return;
 
             LoadDrives( SelectedDriveID );
+        }
+
+        private void PauseBackgroundWork( bool rememberTimerState )
+        {
+            if ( rememberTimerState )
+                _restoreTimersAfterPause = _timersEnabled;
+            else
+                _restoreTimersAfterPause = false;
+
+            _backgroundWorkPaused = true;
+            tmrIdle.Enabled = false;
+
+            foreach ( var timer in _timers.Values )
+                timer.Enabled = false;
         }
 
         private static void OpenWithShell( string target )

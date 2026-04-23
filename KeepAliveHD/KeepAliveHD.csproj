@@ -10,7 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KeepAliveHD</RootNamespace>
     <AssemblyName>KeepAliveHD</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <FileUpgradeFlags>
@@ -73,6 +76,21 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Resources.Extensions">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.NET.Runtime.MonoTargets.Sdk\6.0.36\tasks\net472\System.Resources.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.NET.Runtime.MonoTargets.Sdk\6.0.36\tasks\net472\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.NET.Runtime.MonoTargets.Sdk\6.0.36\tasks\net472\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.NET.Runtime.MonoTargets.Sdk\6.0.36\tasks\net472\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.NET.Runtime.MonoTargets.Sdk\6.0.36\tasks\net472\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>

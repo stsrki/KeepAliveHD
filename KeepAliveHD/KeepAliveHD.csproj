@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
@@ -20,11 +20,5 @@
     <Content Include="settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="artifacts\**\*.cs;obj\**\*.cs;Properties\Settings.Designer.cs" />
-    <EmbeddedResource Remove="artifacts\**;obj\**" />
-    <None Remove="artifacts\**;obj\**;Properties\Settings.settings" />
   </ItemGroup>
 </Project>

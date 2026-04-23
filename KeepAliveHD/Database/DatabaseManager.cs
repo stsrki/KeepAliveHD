@@ -109,6 +109,7 @@ namespace KeepAliveHD.Database
                            VolumeName = string.Join( ", ", d.VolumeNames.Take( 3 ) ) + ( d.VolumeNames.Count > 3 ? " ..." : "" ),
                            d.TimeInterval,
                            TimeIntervalText = d.TimeInterval.ToString() + ( d.TimeUnit == "s" ? " seconds" : d.TimeUnit == "m" ? " minutes" : d.TimeUnit == "h" ? " hours" : " unknown" ) + ( d.Operation == "r" ? " (read)" : " (write)" ),
+                           NextRunText = GetNextRunText( d, enabled, DateTime.Now ),
                            d.TimeUnit,
                            d.Status,
                            d.Connected,
@@ -116,6 +117,31 @@ namespace KeepAliveHD.Database
                        };
 
             dg.DataSource = BaseClasses.Helpers.LINQToDataTable( list );
+        }
+
+        public static string GetNextRunText( DriveInfo driveInfo, bool enabled, DateTime now )
+        {
+            if ( driveInfo == null )
+                return string.Empty;
+
+            if ( driveInfo.Status == 0 )
+                return "SUSPENDED";
+
+            if ( !enabled )
+                return "DISABLED";
+
+            if ( !driveInfo.NextRunAt.HasValue )
+                return "--:--";
+
+            TimeSpan remaining = driveInfo.NextRunAt.Value - now;
+
+            if ( remaining < TimeSpan.Zero )
+                remaining = TimeSpan.Zero;
+
+            if ( remaining.TotalHours >= 1 )
+                return remaining.ToString( @"hh\:mm\:ss" );
+
+            return remaining.ToString( @"mm\:ss" );
         }
 
         public static void FillVolumeNames( DataGridView dg, int id )

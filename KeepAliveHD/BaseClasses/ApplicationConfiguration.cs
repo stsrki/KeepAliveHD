@@ -302,6 +302,12 @@ namespace KeepAliveHD.BaseClasses
             set { SetValueBool( SectionName_Application, "DelayWriteOnSystemResume", value ); }
         }
 
+        public static bool ShowCountdownTimer
+        {
+            get { return GetValueBool( SectionName_Application, "ShowCountdownTimer", true ); }
+            set { SetValueBool( SectionName_Application, "ShowCountdownTimer", value ); }
+        }
+
         #endregion
 
         #endregion

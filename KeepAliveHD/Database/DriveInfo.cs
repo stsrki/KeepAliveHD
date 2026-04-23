@@ -1,4 +1,5 @@
 ﻿#region Using Directives
+using System;
 using System.Collections.Generic;
 #endregion
 
@@ -37,6 +38,8 @@ namespace KeepAliveHD.Database
         public int Status { get; set; }
 
         public bool Connected { get; set; }
+
+        public DateTime? NextRunAt { get; set; }
 
         #endregion
     }

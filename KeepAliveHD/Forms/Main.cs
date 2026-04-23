@@ -53,6 +53,10 @@ namespace KeepAliveHD.Forms
 
         private Random _random = new Random( Guid.NewGuid().GetHashCode() );
 
+        private readonly Timer _countdownTimer = new Timer();
+
+        private const string DrivesNextRunColumnName = "DrivesNextRunText";
+
         #endregion
 
         #region Constructors
@@ -62,6 +66,9 @@ namespace KeepAliveHD.Forms
             InitializeComponent();
 
             _minimize = minimize;
+            _countdownTimer.Interval = 1000;
+            _countdownTimer.Tick += CountdownTimer_Tick;
+            chkShowCountdownTimer.CheckedChanged += chkShowCountdownTimer_CheckedChanged;
         }
 
         #endregion
@@ -79,6 +86,7 @@ namespace KeepAliveHD.Forms
 
                 dgDrives.AutoGenerateColumns = dgConnectedDrives.AutoGenerateColumns = false;
                 dgConnectedDrives.CellFormatting += dgConnectedDrives_CellFormatting;
+                EnsureDriveCountdownColumn();
 
                 Database.DatabaseManager.Load();
 
@@ -162,6 +170,8 @@ namespace KeepAliveHD.Forms
             }
 
             tmrIdle.Enabled = false;
+            _countdownTimer.Enabled = false;
+            _countdownTimer.Dispose();
 
             foreach ( var timer in _timers )
             {
@@ -286,7 +296,12 @@ namespace KeepAliveHD.Forms
                 }
 
                 if ( enabled && ( driveInfo.Status == 1 ) )
+                {
                     ManageDriveOperation( driveInfo );
+                    ScheduleNextRun( timer, driveInfo );
+                }
+                else
+                    driveInfo.NextRunAt = null;
 
                 timer.Enabled = enabled && ( driveInfo.Status == 1 );
             }
@@ -329,6 +344,7 @@ namespace KeepAliveHD.Forms
                     Database.DriveInfo driveInfo = timer.Tag as Database.DriveInfo;
 
                     ManageDriveOperation( driveInfo );
+                    ScheduleNextRun( timer, driveInfo );
                 }
             }
         }
@@ -665,6 +681,14 @@ namespace KeepAliveHD.Forms
                 AppConfiguration.DelayWriteOnSystemResume = chkDelayWriteOnResume.Checked;
         }
 
+        private void chkShowCountdownTimer_CheckedChanged( object sender, EventArgs e )
+        {
+            if ( chkShowCountdownTimer.ContainsFocus )
+                AppConfiguration.ShowCountdownTimer = chkShowCountdownTimer.Checked;
+
+            ApplyCountdownTimerVisibility();
+        }
+
         #endregion
 
         #region Windows
@@ -755,6 +779,7 @@ namespace KeepAliveHD.Forms
                 dgDrives.Rows[0].Selected = true;
 
             SetDrivesEditMode();
+            ApplyCountdownTimerVisibility();
         }
 
         private void LoadConnectedDrives()
@@ -804,10 +829,12 @@ namespace KeepAliveHD.Forms
             chkLogMessages.Checked = AppConfiguration.LogMessages;
             chkStartMinimized.Checked = AppConfiguration.StartMinimized;
             chkDelayWriteOnResume.Checked = AppConfiguration.DelayWriteOnSystemResume;
+            chkShowCountdownTimer.Checked = AppConfiguration.ShowCountdownTimer;
 
             SetEngineStatus( this.WritingEnabled ? EngineStatus.Started : EngineStatus.Stopped );
 
             chkTurnOffWhenUserInactive_CheckedChanged( null, null );
+            ApplyCountdownTimerVisibility();
         }
 
         private void SetEngineStatus( EngineStatus status )
@@ -861,6 +888,72 @@ namespace KeepAliveHD.Forms
             LoadDrives( SelectedDriveID );
         }
 
+        private void ApplyCountdownTimerVisibility()
+        {
+            bool visible = chkShowCountdownTimer.Checked;
+
+            if ( dgDrives.Columns.Contains( DrivesNextRunColumnName ) )
+                dgDrives.Columns[DrivesNextRunColumnName].Visible = visible;
+
+            _countdownTimer.Enabled = visible;
+
+            if ( visible )
+                RefreshDriveCountdowns();
+        }
+
+        private void EnsureDriveCountdownColumn()
+        {
+            if ( dgDrives.Columns.Contains( DrivesNextRunColumnName ) )
+                return;
+
+            DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
+            column.Name = DrivesNextRunColumnName;
+            column.DataPropertyName = "NextRunText";
+            column.HeaderText = "Next Run";
+            column.ReadOnly = true;
+            column.Width = 80;
+            column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            dgDrives.Columns.Insert( DriveStatusText.Index, column );
+        }
+
+        private void ScheduleNextRun( Timer timer, Database.DriveInfo driveInfo )
+        {
+            if ( driveInfo == null )
+                return;
+
+            if ( timer == null )
+            {
+                driveInfo.NextRunAt = null;
+                return;
+            }
+
+            driveInfo.NextRunAt = DateTime.Now.AddMilliseconds( timer.Interval );
+        }
+
+        private void CountdownTimer_Tick( object sender, EventArgs e )
+        {
+            RefreshDriveCountdowns();
+        }
+
+        private void RefreshDriveCountdowns()
+        {
+            if ( IsDisposed || !IsHandleCreated || dgDrives.Rows.Count == 0 || !dgDrives.Columns.Contains( DrivesNextRunColumnName ) )
+                return;
+
+            DateTime now = DateTime.Now;
+            int nextRunColumnIndex = dgDrives.Columns[DrivesNextRunColumnName].Index;
+
+            foreach ( DataGridViewRow row in dgDrives.Rows )
+            {
+                string drive = Convert.ToString( row.Cells[DrivesLetter.Index].Value );
+                var driveInfo = Database.DatabaseManager.GetByDrive( drive );
+
+                if ( driveInfo != null )
+                    row.Cells[nextRunColumnIndex].Value = Database.DatabaseManager.GetNextRunText( driveInfo, this.WritingEnabled, now );
+            }
+        }
+
         private void PauseBackgroundWork( bool rememberTimerState )
         {
             if ( rememberTimerState )
@@ -873,6 +966,9 @@ namespace KeepAliveHD.Forms
 
             foreach ( var timer in _timers.Values )
                 timer.Enabled = false;
+
+            foreach ( var driveInfo in Database.DatabaseManager.GetAll() )
+                driveInfo.NextRunAt = null;
         }
 
         private static void OpenWithShell( string target )

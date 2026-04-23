@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using KeepAliveHD.BaseClasses;
 #endregion
 
 namespace KeepAliveHD.Database
@@ -63,7 +64,7 @@ namespace KeepAliveHD.Database
                                     select new DriveInfo()
                                     {
                                         ID = d.Element( "ID" ) == null ? GetNewID() : Convert.ToInt32( d.Element( "ID" ).Value ),
-                                        Drive = d.Element( "Drive" ) == null ? string.Empty : d.Element( "Drive" ).Value,
+                                        Drive = d.Element( "Drive" ) == null ? string.Empty : Helpers.NormalizeDrivePath( d.Element( "Drive" ).Value ),
                                         VolumeNames = d.Element( "VolumeNames" ) == null ?
                                             new List<string>( new string[] { ( d.Element( "VolumeName" ) == null ? string.Empty : d.Element( "VolumeName" ).Value ) } ) : // this is needed to support old xml schema
                                             new List<string>( ( from v in d.Element( "VolumeNames" ).Elements() select v == null ? string.Empty : v.Value ).ToArray() ),
@@ -164,6 +165,7 @@ namespace KeepAliveHD.Database
 
         public static DriveInfo GetByDrive( string drive )
         {
+            drive = Helpers.NormalizeDrivePath( drive );
             return _drives.FirstOrDefault( x => x.Drive == drive );
         }
 
@@ -174,6 +176,7 @@ namespace KeepAliveHD.Database
 
         public static bool Exist( int id, string drive )
         {
+            drive = Helpers.NormalizeDrivePath( drive );
             //return ( from d in _Drives where d.ID != iID && Path.GetPathRoot( d.Drive ) == Path.GetPathRoot( sDrive ) select d ).Count() > 0;
             return ( from d in _drives where d.ID != id && d.Drive == drive select d ).Any();
         }
@@ -181,6 +184,7 @@ namespace KeepAliveHD.Database
         public static bool Insert( out int id, string drive, string volumeName, string operation, int timeInterval, string timeUnit, int status )
         {
             id = 0;
+            drive = Helpers.NormalizeDrivePath( drive );
 
             try
             {
@@ -213,6 +217,7 @@ namespace KeepAliveHD.Database
         {
             try
             {
+                drive = Helpers.NormalizeDrivePath( drive );
                 DriveInfo driveInfo = _drives.FirstOrDefault( x => x.ID == id );
 
                 if ( driveInfo != null )

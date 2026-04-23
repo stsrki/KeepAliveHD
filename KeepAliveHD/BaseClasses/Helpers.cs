@@ -81,10 +81,23 @@ namespace KeepAliveHD.BaseClasses
 
             path = path.Trim().Replace( Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar );
 
+            if ( path.Length == 2 && char.IsLetter( path[0] ) && path[1] == ':' )
+                return path + Path.DirectorySeparatorChar;
+
             if ( path.Length > 3 )
                 path = path.TrimEnd( Path.DirectorySeparatorChar );
 
             return path;
+        }
+
+        public static string GetKeepAliveFilePath( string drivePath )
+        {
+            drivePath = NormalizeDrivePath( drivePath );
+
+            if ( string.IsNullOrEmpty( drivePath ) )
+                return "KeepAliveHD.txt";
+
+            return Path.Combine( Path.GetFullPath( drivePath ), "KeepAliveHD.txt" );
         }
 
         public static string GetVolumeIdentity( string path )

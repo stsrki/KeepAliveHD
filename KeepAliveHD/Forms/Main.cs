@@ -354,6 +354,7 @@ namespace KeepAliveHD.Forms
             if ( _backgroundWorkPaused )
                 return;
 
+            string drivePath = Helpers.NormalizeDrivePath( driveInfo.Drive );
             bool previousConnected = driveInfo.Connected;
 
             if ( _resumedFromSleep != null )
@@ -370,20 +371,20 @@ namespace KeepAliveHD.Forms
             try
             {
                 if ( !ignoreVolumeNames )
-                    volumeName = Helpers.GetVolumeIdentity( driveInfo.Drive );
+                    volumeName = Helpers.GetVolumeIdentity( drivePath );
             }
             catch ( Exception exc )
             {
-                LogManager.Write( exc.Message );
+                LogManager.Write( "Failed to resolve volume identity for '{0}': {1}", drivePath, exc.Message );
             }
 
-            if ( Directory.Exists( driveInfo.Drive ) && ( ignoreVolumeNames == true || ( ignoreVolumeNames == false && driveInfo.VolumeNames.Contains( volumeName ) ) ) )
+            if ( Directory.Exists( drivePath ) && ( ignoreVolumeNames == true || ( ignoreVolumeNames == false && driveInfo.VolumeNames.Contains( volumeName ) ) ) )
             {
                 try
                 {
                     if ( driveInfo.Operation == "r" )
                     {
-                        var fileNames = Directory.EnumerateFiles( driveInfo.Drive, "*.*" ).Take( 5 ).ToList();
+                        var fileNames = Directory.EnumerateFiles( drivePath, "*.*" ).Take( 5 ).ToList();
 
                         if ( fileNames != null && fileNames.Count > 0 )
                         {
@@ -419,7 +420,7 @@ namespace KeepAliveHD.Forms
                     }
                     else
                     {
-                        var fileName = Path.Combine( Path.GetFullPath( driveInfo.Drive ), "KeepAliveHD.txt" );
+                        var fileName = Helpers.GetKeepAliveFilePath( drivePath );
 
                         using ( var writer = new StreamWriter( fileName, false, Encoding.ASCII ) )
                         {
@@ -439,7 +440,7 @@ namespace KeepAliveHD.Forms
                 }
                 catch ( Exception exc )
                 {
-                    LogManager.Write( exc.Message );
+                    LogDriveOperationError( driveInfo, drivePath, exc );
                 }
             }
             else
@@ -886,6 +887,14 @@ namespace KeepAliveHD.Forms
                 return;
 
             LoadDrives( SelectedDriveID );
+        }
+
+        private void LogDriveOperationError( Database.DriveInfo driveInfo, string drivePath, Exception exc )
+        {
+            string operation = driveInfo.Operation == "r" ? "read" : "write";
+            string targetPath = driveInfo.Operation == "r" ? drivePath : Helpers.GetKeepAliveFilePath( drivePath );
+
+            LogManager.Write( "Drive '{0}' {1} failed for '{2}': {3}", drivePath, operation, targetPath, exc.Message );
         }
 
         private void ApplyCountdownTimerVisibility()

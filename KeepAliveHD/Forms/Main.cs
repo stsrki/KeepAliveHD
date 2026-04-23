@@ -61,8 +61,6 @@ namespace KeepAliveHD.Forms
 
         private readonly Timer _countdownTimer = new Timer();
 
-        private const string DrivesNextRunColumnName = "DrivesNextRunText";
-
         #endregion
 
         #region Constructors
@@ -95,7 +93,6 @@ namespace KeepAliveHD.Forms
 
                 dgDrives.AutoGenerateColumns = dgConnectedDrives.AutoGenerateColumns = false;
                 dgConnectedDrives.CellFormatting += dgConnectedDrives_CellFormatting;
-                EnsureDriveCountdownColumn();
 
                 Database.DatabaseManager.Load();
 
@@ -995,29 +992,12 @@ namespace KeepAliveHD.Forms
         {
             bool visible = chkShowCountdownTimer.Checked;
 
-            if ( dgDrives.Columns.Contains( DrivesNextRunColumnName ) )
-                dgDrives.Columns[DrivesNextRunColumnName].Visible = visible;
+            DrivesNextRunText.Visible = visible;
 
             _countdownTimer.Enabled = visible;
 
             if ( visible )
                 RefreshDriveCountdowns();
-        }
-
-        private void EnsureDriveCountdownColumn()
-        {
-            if ( dgDrives.Columns.Contains( DrivesNextRunColumnName ) )
-                return;
-
-            DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
-            column.Name = DrivesNextRunColumnName;
-            column.DataPropertyName = "NextRunText";
-            column.HeaderText = "Next Run";
-            column.ReadOnly = true;
-            column.Width = 80;
-            column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            dgDrives.Columns.Insert( DriveStatusText.Index, column );
         }
 
         private void ScheduleNextRun( Timer timer, Database.DriveInfo driveInfo )
@@ -1041,11 +1021,11 @@ namespace KeepAliveHD.Forms
 
         private void RefreshDriveCountdowns()
         {
-            if ( IsDisposed || !IsHandleCreated || dgDrives.Rows.Count == 0 || !dgDrives.Columns.Contains( DrivesNextRunColumnName ) )
+            if ( IsDisposed || !IsHandleCreated || dgDrives.Rows.Count == 0 )
                 return;
 
             DateTime now = DateTime.Now;
-            int nextRunColumnIndex = dgDrives.Columns[DrivesNextRunColumnName].Index;
+            int nextRunColumnIndex = DrivesNextRunText.Index;
 
             foreach ( DataGridViewRow row in dgDrives.Rows )
             {

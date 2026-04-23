@@ -1,9 +1,7 @@
 ﻿#region Using Directives
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using System.Threading;
+using System.Windows.Forms;
 using KeepAliveHD.BaseClasses;
 #endregion
 
@@ -36,7 +34,7 @@ namespace KeepAliveHD
                     LogManager.Create( string.Format( "log_{0}.txt", DateTime.Today.ToString( "yyyy-MM-dd" ) ) );
 
                     // initialise configuration
-                    new ApplicationConfiguration();
+                    new AppConfiguration();
 
                     bool minimize = false;
 
@@ -53,10 +51,9 @@ namespace KeepAliveHD
                         }
                     }
                     else
-                        minimize = ApplicationConfiguration.StartMinimized;
+                        minimize = AppConfiguration.StartMinimized;
 
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault( false );
+                    ApplicationConfiguration.Initialize();
                     Application.Run( new Forms.Main( minimize ) );
                 }
                 catch ( Exception exc )

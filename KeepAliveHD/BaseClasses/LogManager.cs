@@ -1,9 +1,6 @@
 ﻿#region Using Directives
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 #endregion
 
@@ -36,7 +33,7 @@ namespace KeepAliveHD.BaseClasses
 
         public static void Write( string message, params object[] args )
         {
-            if ( ApplicationConfiguration.LogMessages )
+            if ( AppConfiguration.LogMessages )
             {
                 using ( StreamWriter writer = new StreamWriter( LogFullPath, true, Encoding.UTF8 ) )
                 {

@@ -1,14 +1,12 @@
 ﻿#region Using Directives
 using System;
-using System.Data;
 using System.Collections.Generic;
-using System.Linq;
-using System.Data.Linq;
-using System.Text;
-using System.Windows.Forms;
+using System.Data;
 using System.IO;
-using System.Xml.Linq;
+using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
+using System.Xml.Linq;
 #endregion
 
 namespace KeepAliveHD.Database

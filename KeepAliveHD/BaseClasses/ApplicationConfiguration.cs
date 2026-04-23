@@ -1,20 +1,18 @@
 ﻿#region Using Directives
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Configuration;
-using System.Xml.Serialization;
 using System.IO;
-using System.Text;
-using Microsoft.Win32;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Xml.Serialization;
+using Microsoft.Win32;
 #endregion
 
 namespace KeepAliveHD.BaseClasses
 {
-    public class ApplicationConfiguration
+    public class AppConfiguration
     {
         #region Classes
 
@@ -76,7 +74,7 @@ namespace KeepAliveHD.BaseClasses
 
         #region Constructors
 
-        public ApplicationConfiguration()
+        public AppConfiguration()
         {
             SettingsDirectory = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ), "KeepAliveHD" );
 

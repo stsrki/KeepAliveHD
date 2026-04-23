@@ -48,8 +48,6 @@ namespace KeepAliveHD.Forms
 
         private Random _random = new Random( Guid.NewGuid().GetHashCode() );
 
-        private bool _startedFromTaskScheduler = false;
-
         #endregion
 
         #region Constructors
@@ -59,8 +57,6 @@ namespace KeepAliveHD.Forms
             InitializeComponent();
 
             _minimize = minimize;
-
-            _startedFromTaskScheduler = Directory.GetCurrentDirectory() != Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location );
         }
 
         #endregion
@@ -196,10 +192,7 @@ namespace KeepAliveHD.Forms
         {
             if ( e.Button == MouseButtons.Left )
             {
-                ntfTray.Visible = false;
-                this.WindowState = FormWindowState.Normal;
-                this.ShowInTaskbar = true;
-                this.Show();
+                ShowMainWindow();
             }
             else if ( e.Button == MouseButtons.Right )
             {
@@ -361,12 +354,12 @@ namespace KeepAliveHD.Forms
                 {
                     if ( driveInfo.Operation == "r" )
                     {
-                        var fileNames = Directory.GetFiles( driveInfo.Drive, "*.*" ).Take( 5 ).ToList();
+                        var fileNames = Directory.EnumerateFiles( driveInfo.Drive, "*.*" ).Take( 5 ).ToList();
 
                         if ( fileNames != null && fileNames.Count > 0 )
                         {
                             // get random file
-                            var fileName = fileNames[_random.Next( Math.Max( fileNames.Count - 1, 1 ) )];
+                            var fileName = fileNames[_random.Next( fileNames.Count )];
 
                             if ( fileName != null )
                             {
@@ -379,7 +372,7 @@ namespace KeepAliveHD.Forms
                                         {
                                             // read random byte from the file
                                             var maxOffset = reader.Length > int.MaxValue ? int.MaxValue : (int)reader.Length;
-                                            var offset = _random.Next( Math.Max( maxOffset - 1, 1 ) );
+                                            var offset = _random.Next( maxOffset );
 
                                             //LogManager.Write( "Read one byte at location {0} from file '{1}'", offset, fileName );
 
@@ -824,6 +817,22 @@ namespace KeepAliveHD.Forms
             }
         }
 
+        private void ShowMainWindow()
+        {
+            ntfTray.Visible = false;
+            ShowInTaskbar = true;
+
+            if ( WindowState == FormWindowState.Minimized )
+                WindowState = FormWindowState.Normal;
+
+            Show();
+
+            if ( !Visible )
+                Visible = true;
+
+            Activate();
+        }
+
         private void SetDrivesEditMode()
         {
             btnDriveEdit.Enabled = dgDrives.SelectedRows.Count == 1; // enable edit only when one drive is selected
@@ -837,6 +846,17 @@ namespace KeepAliveHD.Forms
         private void InvokeGUIThread( Action action )
         {
             this.Invoke( action );
+        }
+
+        protected override void WndProc( ref Message m )
+        {
+            if ( m.Msg == NativeMethods.WM_SHOWME )
+            {
+                ShowMainWindow();
+                return;
+            }
+
+            base.WndProc( ref m );
         }
 
         #endregion
@@ -1028,7 +1048,7 @@ namespace KeepAliveHD.Forms
         {
             get
             {
-                return _startedFromTaskScheduler || ApplicationConfiguration.WritingEnabled;
+                return ApplicationConfiguration.WritingEnabled;
             }
         }
 

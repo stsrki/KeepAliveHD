@@ -37,7 +37,14 @@ namespace KeepAliveHD.Database
 
         public static void Load()
         {
+            _drives.Clear();
+
             string sOldDrivesFilePath = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DrivesFileName );
+
+            var drivesDirectory = Path.GetDirectoryName( DrivesFilePath );
+
+            if ( !Directory.Exists( drivesDirectory ) )
+                Directory.CreateDirectory( drivesDirectory );
 
             if ( File.Exists( sOldDrivesFilePath ) && !File.Exists( DrivesFilePath ) )
             {
@@ -73,6 +80,11 @@ namespace KeepAliveHD.Database
 
         private static void Save()
         {
+            var drivesDirectory = Path.GetDirectoryName( DrivesFilePath );
+
+            if ( !Directory.Exists( drivesDirectory ) )
+                Directory.CreateDirectory( drivesDirectory );
+
             XElement doc = new XElement( "Root",
                   from d in _drives
                   select new XElement( "DriveInfo",
@@ -167,9 +179,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 
@@ -195,9 +207,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 
@@ -219,9 +231,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 
@@ -241,9 +253,9 @@ namespace KeepAliveHD.Database
 
                 return true;
             }
-            catch ( Exception exc )
+            catch ( Exception )
             {
-                throw exc;
+                throw;
             }
         }
 

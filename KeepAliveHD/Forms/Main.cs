@@ -39,6 +39,8 @@ namespace KeepAliveHD.Forms
 
         private bool _minimize = false;
 
+        private bool _restoringFromTray = false;
+
         private DateTime? _resumedFromSleep = null;
 
         private ManagementEventWatcher InsertWatcher;
@@ -785,7 +787,7 @@ namespace KeepAliveHD.Forms
 
         private void SetMinimizeMode()
         {
-            if ( this.WindowState == FormWindowState.Minimized && chkSystemHideInTray.Checked == true )
+            if ( !_restoringFromTray && this.WindowState == FormWindowState.Minimized && chkSystemHideInTray.Checked == true )
             {
                 ntfTray.Visible = true;
                 ntfTray.BalloonTipText = "KeepAliveHD";
@@ -797,18 +799,27 @@ namespace KeepAliveHD.Forms
 
         private void ShowMainWindow()
         {
-            ntfTray.Visible = false;
-            ShowInTaskbar = true;
+            _restoringFromTray = true;
 
-            if ( WindowState == FormWindowState.Minimized )
-                WindowState = FormWindowState.Normal;
-
-            Show();
-
-            if ( !Visible )
+            try
+            {
+                ntfTray.Visible = false;
+                ShowInTaskbar = true;
                 Visible = true;
-
-            Activate();
+                Show();
+                WindowState = FormWindowState.Normal;
+                BringToFront();
+                Activate();
+            }
+            finally
+            {
+                BeginInvoke( new Action( () =>
+                {
+                    _restoringFromTray = false;
+                    BringToFront();
+                    Activate();
+                } ) );
+            }
         }
 
         private void RefreshDriveStatus()

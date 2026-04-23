@@ -45,6 +45,8 @@ namespace KeepAliveHD.Forms
 
         private bool _minimize = false;
 
+        private bool _startHiddenInTray = false;
+
         private bool _restoringFromTray = false;
 
         private DateTime? _resumedFromSleep = null;
@@ -70,6 +72,14 @@ namespace KeepAliveHD.Forms
             InitializeComponent();
 
             _minimize = minimize;
+            _startHiddenInTray = _minimize && AppConfiguration.HideInTray;
+
+            if ( _startHiddenInTray )
+            {
+                ShowInTaskbar = false;
+                WindowState = FormWindowState.Minimized;
+            }
+
             _countdownTimer.Interval = 1000;
             _countdownTimer.Tick += CountdownTimer_Tick;
             chkShowCountdownTimer.CheckedChanged += chkShowCountdownTimer_CheckedChanged;
@@ -88,7 +98,7 @@ namespace KeepAliveHD.Forms
         {
             try
             {
-                if ( _minimize )
+                if ( _minimize && !_startHiddenInTray )
                     this.WindowState = FormWindowState.Minimized;
 
                 dgDrives.AutoGenerateColumns = dgConnectedDrives.AutoGenerateColumns = false;
@@ -914,6 +924,7 @@ namespace KeepAliveHD.Forms
                 ntfTray.Text = "KeepAliveHD";
                 this.ShowInTaskbar = false;
                 this.Hide();
+                _startHiddenInTray = false;
             }
         }
 

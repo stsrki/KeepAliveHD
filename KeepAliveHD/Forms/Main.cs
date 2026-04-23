@@ -354,7 +354,7 @@ namespace KeepAliveHD.Forms
             try
             {
                 if ( !ignoreVolumeNames )
-                    volumeName = ( new System.IO.DriveInfo( Path.GetPathRoot( driveInfo.Drive ) ) ).VolumeLabel;
+                    volumeName = Helpers.GetVolumeIdentity( driveInfo.Drive );
             }
             catch ( Exception exc )
             {

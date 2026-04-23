@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 #endregion
@@ -71,6 +72,45 @@ namespace KeepAliveHD.BaseClasses
             {
                 return string.Concat( bytes, " Bytes" );
             }
+        }
+
+        public static string NormalizeDrivePath( string path )
+        {
+            if ( string.IsNullOrWhiteSpace( path ) )
+                return string.Empty;
+
+            path = path.Trim().Replace( Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar );
+
+            if ( path.Length > 3 )
+                path = path.TrimEnd( Path.DirectorySeparatorChar );
+
+            return path;
+        }
+
+        public static string GetVolumeIdentity( string path )
+        {
+            path = NormalizeDrivePath( path );
+
+            if ( string.IsNullOrEmpty( path ) )
+                return string.Empty;
+
+            string root = Path.GetPathRoot( path );
+
+            if ( string.IsNullOrEmpty( root ) )
+                return string.Empty;
+
+            try
+            {
+                string volumeLabel = ( new DriveInfo( root ) ).VolumeLabel;
+
+                if ( !string.IsNullOrWhiteSpace( volumeLabel ) )
+                    return volumeLabel;
+            }
+            catch
+            {
+            }
+
+            return NormalizeDrivePath( root );
         }
 
         public static DataTable LINQToDataTable<T>( IEnumerable<T> varlist )

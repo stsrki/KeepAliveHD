@@ -59,15 +59,15 @@ namespace KeepAliveHD.Forms
             {
                 if ( DialogResult == DialogResult.OK )
                 {
-                    string drive = txtDrive.Text.Trim();
+                    string drive = Helpers.NormalizeDrivePath( txtDrive.Text );
 
                     if ( string.IsNullOrEmpty( drive ) )
-                        throw new Exception( "You must select drive." );
+                        throw new Exception( "You must enter a drive, directory, or UNC path." );
 
                     if ( !Directory.Exists( drive ) )
                         throw new Exception( "The path does not exist." );
 
-                    string volumeName = ( new System.IO.DriveInfo( Path.GetPathRoot( drive ) ) ).VolumeLabel;
+                    string volumeName = Helpers.GetVolumeIdentity( drive );
                     string operation = ComboBoxTools.GetSelectedValue( cboOperation );
                     int timeInterval = (int)numTimeInterval.Value;
                     string timeUnit = ComboBoxTools.GetSelectedValue( cboTimeUnit );
@@ -113,7 +113,7 @@ namespace KeepAliveHD.Forms
             {
                 if ( dialog.ShowDialog() == DialogResult.OK )
                 {
-                    txtDrive.Text = dialog.SelectedPath;
+                    txtDrive.Text = Helpers.NormalizeDrivePath( dialog.SelectedPath );
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace KeepAliveHD.Forms
         {
             Database.DriveInfo di = Database.DatabaseManager.Get( iID );
 
-            txtDrive.Text = di.Drive;
+            txtDrive.Text = Helpers.NormalizeDrivePath( di.Drive );
             numTimeInterval.Value = di.TimeInterval;
             chkEnabled.Checked = di.Status == 1;
             ComboBoxTools.SelectItemValue( cboOperation, di.Operation );

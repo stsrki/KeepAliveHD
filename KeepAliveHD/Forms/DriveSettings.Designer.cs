@@ -62,7 +62,6 @@ namespace KeepAliveHD.Forms
             // 
             this.txtDrive.Location = new System.Drawing.Point(15, 25);
             this.txtDrive.Name = "txtDrive";
-            this.txtDrive.ReadOnly = true;
             this.txtDrive.Size = new System.Drawing.Size(230, 20);
             this.txtDrive.TabIndex = 4;
             // 
@@ -71,9 +70,9 @@ namespace KeepAliveHD.Forms
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 9);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(87, 13);
+            this.label2.Size = new System.Drawing.Size(130, 13);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Drive or directory";
+            this.label2.Text = "Drive, directory, or UNC path";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // chkEnabled

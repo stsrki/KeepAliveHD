@@ -28,7 +28,7 @@ namespace KeepAliveHD.Forms
         {
             InitializeComponent();
 
-            _drives.AddRange( drives );
+            _drives.AddRange( drives.ConvertAll( x => Helpers.NormalizeDrivePath( x ) ) );
         }
 
         #endregion
@@ -70,13 +70,13 @@ namespace KeepAliveHD.Forms
                     {
                         if ( !Database.DatabaseManager.Exist( -1, drive ) )
                         {
-                            string sVolumeName = ( new System.IO.DriveInfo( Path.GetPathRoot( drive ) ) ).VolumeLabel;
+                            string sVolumeName = Helpers.GetVolumeIdentity( drive );
 
                             Database.DatabaseManager.Insert( out _id, drive: drive, volumeName: sVolumeName, operation: operation, timeInterval: timeInterval, timeUnit: timeUnit, status: status );
                         }
                         else
                         {
-                            string sVolumeName = ( new System.IO.DriveInfo( Path.GetPathRoot( drive ) ) ).VolumeLabel;
+                            string sVolumeName = Helpers.GetVolumeIdentity( drive );
 
                             var driveInfo = Database.DatabaseManager.GetByDrive( drive );
 

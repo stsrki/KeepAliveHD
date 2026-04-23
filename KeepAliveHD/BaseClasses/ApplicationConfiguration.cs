@@ -326,6 +326,12 @@ namespace KeepAliveHD.BaseClasses
             set { SetValueBool( SectionName_Application, "ShowCountdownTimer", value ); }
         }
 
+        public static bool SafeWriting
+        {
+            get { return GetValueBool( SectionName_Application, "SafeWriting", true ); }
+            set { SetValueBool( SectionName_Application, "SafeWriting", value ); }
+        }
+
         #endregion
 
         #endregion

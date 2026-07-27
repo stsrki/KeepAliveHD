@@ -220,7 +220,11 @@ namespace KeepAliveHD.BaseClasses
                 RegistryKey rkApp = Registry.CurrentUser.OpenSubKey( "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true );
 
                 if ( value )
-                    rkApp.SetValue( "KeepAliveHD", Assembly.GetExecutingAssembly().Location + " Minimize=True" );
+                {
+                    string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName
+                                     ?? Assembly.GetExecutingAssembly().Location;
+                    rkApp.SetValue( "KeepAliveHD", exePath + " Minimize=True" );
+                }
                 else
                     rkApp.DeleteValue( "KeepAliveHD", false );
             }
